@@ -11,14 +11,15 @@ import java.util.List;
 @Service
 public class AdvertService {
 
-        AdvertRepository advertRepository;
-        public AdvertService( @Autowired AdvertRepository advertRepository ) {
-            this.advertRepository = advertRepository;
-        }
+    AdvertRepository advertRepository;
+
+    public AdvertService(@Autowired AdvertRepository advertRepository) {
+        this.advertRepository = advertRepository;
+    }
 
 
     public List<Advert> getAdvertsByDateRange(Date from, Date to) {
 
-            return this.advertRepository.findAllByCreatedDateBetween(from, to);
+        return this.advertRepository.findAllByCreatedDateBetween(from, to);
     }
 }

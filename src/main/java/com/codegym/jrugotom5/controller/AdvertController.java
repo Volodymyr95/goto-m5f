@@ -14,17 +14,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/adverts")
 public class AdvertController {
-    AdvertService advertService;
-    public AdvertController( @Autowired AdvertService advertService ) {
+    public AdvertService advertService;
+
+    public AdvertController(@Autowired AdvertService advertService) {
         this.advertService = advertService;
     }
 
-        @GetMapping(path = "/", produces = "application/json")
-        public List<Advert> getAdverts(@RequestParam Date from, Date to) {
-            return this.advertService.getAdvertsByDateRange(from, to);
-        }
-
-
-
+    @GetMapping(path = "/", produces = "application/json")
+    public List<Advert> getAdverts(@RequestParam Date from, Date to) {
+        return this.advertService.getAdvertsByDateRange(from, to);
     }
+
+}
 
