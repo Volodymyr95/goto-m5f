@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Set;
+
 @Entity
 @Data
 @EqualsAndHashCode(exclude = "id")
@@ -22,4 +24,7 @@ public class User {
 
     @Column(unique = true)
     private String email;
+
+    @OneToMany(mappedBy = "createdBy", fetch = FetchType.EAGER)
+    private Set<Advert> createdAdverts;
 }
