@@ -30,5 +30,6 @@ public class Advert {
 
     @Column(name = "is_active")
     private Boolean isActive;
-}
 
+    private String category;
+}
