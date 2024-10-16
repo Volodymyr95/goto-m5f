@@ -1,36 +1,33 @@
 package com.codegym.jrugotom5.entity;
 
-import java.util.Date;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+import java.time.LocalDate;
+
+@Entity
+@Data
+@EqualsAndHashCode(exclude = "id")
 public class Advert {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+
+    private String title;
+
     private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User createdBy;
-    private Date createdDate;
-    private Date endDate;
+
+    @Column(name = "created_date")
+    private LocalDate createdDate;
+
+    @Column(name = "end_date")
+    private LocalDate endDate;
+
+    @Column(name = "is_active")
     private Boolean isActive;
-
-    public Long getId() {
-        return id;
-    }
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-    public User getCreatedBy() {
-        return createdBy;
-    }
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-    public Date getEndDate() {
-        return endDate;
-    }
-    public Boolean getIsActive() {
-        return isActive;
-    }
 }
