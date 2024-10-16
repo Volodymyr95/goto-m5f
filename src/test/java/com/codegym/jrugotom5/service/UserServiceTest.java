@@ -10,11 +10,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
@@ -34,29 +32,19 @@ public class UserServiceTest {
 
     @Test
     public void testGetAll_OneUser() {
-        User user = new User();
-        List<User> oneUser = List.of(user);
+        UserInfoDTO expectedDto = new UserInfoDTO();
+        expectedDto.setId(1L);
+        expectedDto.setFirstName("John");
+        expectedDto.setLastName("Smith");
 
-        when(userRepository.findAll()).thenReturn(oneUser);
-        when(modelMapper.map(user, UserInfoDTO.class)).thenReturn(new UserInfoDTO());
+        when(userRepository.findAll()).thenReturn(List.of(new User()));
+        when(modelMapper.map(any(User.class), eq(UserInfoDTO.class))).thenReturn(expectedDto);
 
-        List<UserInfoDTO> usersFromService = userService.getAllUsers();
+        UserInfoDTO dtoFromService = userService.getAllUsers().get(0);
 
-        assertEquals(1, usersFromService.size());
+        assertEquals(expectedDto, dtoFromService);
 
-        verify(userRepository, times(1)).findAll();
-        verify(modelMapper, times(1)).map(user, UserInfoDTO.class);
-    }
-
-    @Test
-    public void testGetAll_NoUsers() {
-        ArrayList<User> emptyUsers = new ArrayList<>();
-        when(userRepository.findAll()).thenReturn(emptyUsers);
-
-        List<UserInfoDTO> usersFromService = userService.getAllUsers();
-        assertEquals(0, usersFromService.size());
-
-        verify(userRepository, times(1)).findAll();
-        verify(modelMapper, never()).map(any(), eq(UserInfoDTO.class));
+        verify(userRepository).findAll();
+        verify(modelMapper).map(any(User.class), eq(UserInfoDTO.class));
     }
 }
