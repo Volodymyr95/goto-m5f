@@ -16,7 +16,6 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    @RequestMapping
     public List<UserInfoDTO> getUsers() {
         return userService.getAllUsers();
     }
