@@ -11,7 +11,7 @@ public class AdvertService {
 
     private final AdvertRepository advertRepository;
 
-    public void createAdvert() {
-        advertRepository.save(new Advert());
+    public void createAdvert(Advert advert) {
+        advertRepository.save(advert);
     }
 }
