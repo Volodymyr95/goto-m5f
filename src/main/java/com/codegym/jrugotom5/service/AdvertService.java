@@ -39,4 +39,9 @@ public class AdvertService {
                 .map(advert->modelMapper.map(advert, AdvertBasicInfoDTO.class))
                 .toList();
     }
+    private final AdvertRepository advertRepository;
+
+    public List<Advert> getByCategory(String category) {
+        return advertRepository.findByCategory(category);
+    }
 }
