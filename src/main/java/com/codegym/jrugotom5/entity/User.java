@@ -25,6 +25,6 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "createdBy", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
     private Set<Advert> createdAdverts;
 }

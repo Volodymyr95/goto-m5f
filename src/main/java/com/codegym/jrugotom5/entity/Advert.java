@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -14,7 +14,7 @@ public class Advert {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String title;
 
     private String description;
 
@@ -23,10 +23,10 @@ public class Advert {
     private User createdBy;
 
     @Column(name = "created_date")
-    private LocalDateTime createdDate;
+    private LocalDate createdDate;
 
     @Column(name = "end_date")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     @Column(name = "is_active")
     private Boolean isActive;
