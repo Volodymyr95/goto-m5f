@@ -2,7 +2,6 @@ package com.codegym.jrugotom5.service;
 
 import com.codegym.jrugotom5.dto.UserInfoDTO;
 import com.codegym.jrugotom5.entity.User;
-import com.codegym.jrugotom5.exception.UserFetchException;
 import com.codegym.jrugotom5.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,8 +53,8 @@ public class UserServiceTest {
         ArrayList<User> emptyUsers = new ArrayList<>();
         when(userRepository.findAll()).thenReturn(emptyUsers);
 
-        assertThrows(UserFetchException.class,
-                () -> userService.getAllUsers());
+        List<UserInfoDTO> usersFromService = userService.getAllUsers();
+        assertEquals(0, usersFromService.size());
 
         verify(userRepository, times(1)).findAll();
         verify(modelMapper, never()).map(any(), eq(UserInfoDTO.class));
