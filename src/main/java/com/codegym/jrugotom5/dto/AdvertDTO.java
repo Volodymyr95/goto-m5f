@@ -2,23 +2,24 @@ package com.codegym.jrugotom5.dto;
 
 import com.codegym.jrugotom5.entity.User;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class AdvertDTO {
     private Long id;
-    private String name;
+    private String title;
     private String description;
     private User createdBy;
-    private Date createdDate;
-    private Date endDate;
+    private LocalDate createdDate;
+    private LocalDate endDate;
     private Boolean isActive;
 
     public void setId(Long id) {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public void setDescription(String description) {
@@ -29,11 +30,11 @@ public class AdvertDTO {
         this.createdBy = createdBy;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(LocalDate createdDate) {
         this.createdDate = createdDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 

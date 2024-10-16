@@ -32,7 +32,7 @@ public class AdvertController {
     private AdvertDTO convertToDTO(Advert advert) {
         AdvertDTO dto = new AdvertDTO();
         dto.setId(advert.getId());
-        dto.setName(advert.getName());
+        dto.setTitle(advert.getTitle());
         dto.setDescription(advert.getDescription());
         dto.setCreatedDate(advert.getCreatedDate());
         dto.setEndDate(advert.getEndDate());
