@@ -1,6 +1,6 @@
 package com.codegym.jrugotom5.service;
 
-import com.codegym.jrugotom5.dto.UserInfoDTO;
+import com.codegym.jrugotom5.dto.UserNameDTO;
 import com.codegym.jrugotom5.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +16,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
-    public List<UserInfoDTO> getAllUsers() {
+    public List<UserNameDTO> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(user -> modelMapper.map(user, UserInfoDTO.class))
+                .map(user -> modelMapper.map(user, UserNameDTO.class))
                 .toList();
     }
 }
