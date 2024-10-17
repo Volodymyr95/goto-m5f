@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -61,10 +62,10 @@ class AdvertServiceTest {
         when(modelMapper.map(advert1, AdvertDTO.class)).thenReturn(advertDTO1);
         when(modelMapper.map(advert2, AdvertDTO.class)).thenReturn(advertDTO2);
 
-        List<AdvertDTO> result = advertService.getAdvertsByDateRange(from, to);
+        List<AdvertDTO> actualAdverts = advertService.getAdvertsByDateRange(from, to);
 
-        assertEquals(2, result.size());
-        assertEquals("Advert 1", result.get(0).getTitle());
-        assertEquals("Advert 2", result.get(1).getTitle());
+        List<AdvertDTO> expectedAdverts = Arrays.asList(advertDTO1, advertDTO2);
+
+        assertIterableEquals(expectedAdverts, actualAdverts, "The adverts list should match the expected list in both order and content");
     }
 }
