@@ -57,7 +57,7 @@ class AdvertServiceTest {
         advertDTO2.setId(2L);
         advertDTO2.setTitle("Advert 2");
 
-        when(advertRepository.findAllByCreatedDateBetween(from, to)).thenReturn(adverts);
+        when(advertRepository.findAllByCreatedDateBetweenFromTo(from, to)).thenReturn(adverts);
         when(modelMapper.map(advert1, AdvertDTO.class)).thenReturn(advertDTO1);
         when(modelMapper.map(advert2, AdvertDTO.class)).thenReturn(advertDTO2);
 
