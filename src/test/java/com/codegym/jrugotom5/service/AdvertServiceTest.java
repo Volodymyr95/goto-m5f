@@ -3,6 +3,7 @@ package com.codegym.jrugotom5.service;
 import com.codegym.jrugotom5.dto.AdvertDTO;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.repository.AdvertRepository;
+import com.codejym.jrugotom5.exception.InvalidDateRangeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,9 +15,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 class AdvertServiceTest {
@@ -68,4 +67,17 @@ class AdvertServiceTest {
 
         assertIterableEquals(expectedAdverts, actualAdverts, "The adverts list should match the expected list in both order and content");
     }
+
+    @Test
+    void testGetAdvertsByDateRange_InvalidDateRange() {
+        LocalDate from = LocalDate.of(2023, 12, 31);
+        LocalDate to = LocalDate.of(2023, 1, 1);
+
+        InvalidDateRangeException exception = assertThrows(InvalidDateRangeException.class, () -> {
+            advertService.getAdvertsByDateRange(from, to);
+        });
+
+        assertEquals("'From' date should be after 'To' date.", exception.getMessage());
+    }
+
 }
