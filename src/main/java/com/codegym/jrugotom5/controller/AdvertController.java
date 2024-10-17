@@ -15,19 +15,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/adverts")
+@RequestMapping("/api/advert")
 @RequiredArgsConstructor
 public class AdvertController {
    private final AdvertService advertService;
-   private final ModelMapper modelMapper;
 
     @GetMapping(path = "/", produces = "application/json")
     public List<AdvertDTO> getAdverts(@RequestParam LocalDate from, LocalDate to) {
 
-        List<Advert> adverts = advertService.getAdvertsByDateRange(from, to);
-        return adverts.stream()
-                .map(advert -> modelMapper.map(advert, AdvertDTO.class))
-                .collect(Collectors.toList());
+        return advertService.getAdvertsByDateRange(from, to);
     }
 }
 
