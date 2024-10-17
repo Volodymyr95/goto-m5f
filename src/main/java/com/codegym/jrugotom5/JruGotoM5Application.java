@@ -11,10 +11,5 @@ public class JruGotoM5Application {
     public static void main(String[] args) {
         SpringApplication.run(JruGotoM5Application.class, args);
     }
-
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
 }
 
