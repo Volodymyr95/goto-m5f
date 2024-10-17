@@ -3,7 +3,6 @@ package com.codegym.jrugotom5.dto;
 import com.codegym.jrugotom5.entity.User;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class AdvertDTO {
     private Long id;
