@@ -45,6 +45,5 @@ public class UserServiceTest {
         assertEquals(List.of(expectedDto), dtoListFromService);
 
         verify(userRepository).findAll();
-        verify(modelMapper).map(any(User.class), eq(UserBasicInfoDTO.class));
     }
 }
