@@ -1,6 +1,6 @@
 package com.codegym.jrugotom5.service;
 
-import com.codegym.jrugotom5.dto.UserNameDTO;
+import com.codegym.jrugotom5.dto.UserBasicInfoDTO;
 import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,19 +32,19 @@ public class UserServiceTest {
 
     @Test
     public void testGetAll_OneUser() {
-        UserNameDTO expectedDto = new UserNameDTO();
+        UserBasicInfoDTO expectedDto = new UserBasicInfoDTO();
         expectedDto.setId(1L);
         expectedDto.setFirstName("John");
         expectedDto.setLastName("Smith");
 
         when(userRepository.findAll()).thenReturn(List.of(new User()));
-        when(modelMapper.map(any(User.class), eq(UserNameDTO.class))).thenReturn(expectedDto);
+        when(modelMapper.map(any(User.class), eq(UserBasicInfoDTO.class))).thenReturn(expectedDto);
 
-        UserNameDTO dtoFromService = userService.getAllUsers().get(0);
+        List<UserBasicInfoDTO> dtoListFromService = userService.getAllUsers();
 
-        assertEquals(expectedDto, dtoFromService);
+        assertEquals(List.of(expectedDto), dtoListFromService);
 
         verify(userRepository).findAll();
-        verify(modelMapper).map(any(User.class), eq(UserNameDTO.class));
+        verify(modelMapper).map(any(User.class), eq(UserBasicInfoDTO.class));
     }
 }
