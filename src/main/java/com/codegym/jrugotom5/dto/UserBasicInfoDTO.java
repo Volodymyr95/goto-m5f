@@ -4,7 +4,7 @@ import lombok.*;
 
 @NoArgsConstructor
 @Data
-public class UserNameDTO {
+public class UserBasicInfoDTO {
     private Long id;
     private String firstName;
     private String lastName;
