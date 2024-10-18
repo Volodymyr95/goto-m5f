@@ -22,12 +22,12 @@ public class UserServiceTest {
     @Mock
     private ModelMapper modelMapper;
 
-    @InjectMocks
     private UserService userService;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+        userService = new UserService(userRepository, modelMapper);
     }
 
     @Test
