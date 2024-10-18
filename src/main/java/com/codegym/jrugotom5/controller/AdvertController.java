@@ -1,8 +1,9 @@
 package com.codegym.jrugotom5.controller;
 
+import com.codegym.jrugotom5.dto.AdvertCreateDTO;
 import com.codegym.jrugotom5.dto.AdvertDTO;
-import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.service.AdvertService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class AdvertController {
     }
 
     @PostMapping("/new")
-    public void createAdvert(@RequestBody Advert advert) {
+    public void createAdvert(@RequestBody @Valid AdvertCreateDTO advert) {
         advertService.createAdvert(advert);
     }
 }
