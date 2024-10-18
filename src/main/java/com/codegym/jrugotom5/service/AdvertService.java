@@ -3,7 +3,7 @@ package com.codegym.jrugotom5.service;
 import com.codegym.jrugotom5.dto.AdvertDTO;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.repository.AdvertRepository;
-import com.codejym.jrugotom5.exception.InvalidDateRangeException;
+import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
