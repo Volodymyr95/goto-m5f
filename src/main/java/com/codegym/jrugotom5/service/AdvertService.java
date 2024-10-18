@@ -7,15 +7,17 @@ import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
+import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDate;
 import java.util.List;
+import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdvertService {
-
     private final AdvertRepository advertRepository;
     private final ModelMapper modelMapper;
 
@@ -29,5 +31,12 @@ public class AdvertService {
         return adverts.stream()
                 .map(advert -> modelMapper.map(advert, AdvertDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    public List<AdvertBasicInfoDTO> getAllAdverts() {
+        List<Advert> allAdverts = (List<Advert>) advertRepository.findAll();
+        return allAdverts.stream()
+                .map(advert->modelMapper.map(advert, AdvertBasicInfoDTO.class))
+                .toList();
     }
 }
