@@ -16,6 +16,7 @@ public class AdvertToDtoConverter implements Converter<Advert, AdvertDTO> {
                 .createdDate(advert.getCreatedDate())
                 .endDate(advert.getEndDate())
                 .userCreatorId(advert.getCreatedBy().getId())
+                .isActive(advert.getIsActive())
                 .build();
     }
 }

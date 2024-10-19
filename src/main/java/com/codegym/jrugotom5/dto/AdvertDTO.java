@@ -16,4 +16,5 @@ public class AdvertDTO {
     private Long userCreatorId;
     private LocalDate createdDate;
     private LocalDate endDate;
+    private Boolean isActive;
 }
