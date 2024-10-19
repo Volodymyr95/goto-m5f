@@ -30,4 +30,8 @@ public class AdvertService {
                 .map(advert -> modelMapper.map(advert, AdvertDTO.class))
                 .collect(Collectors.toList());
     }
+    public AdvertDTO update(AdvertDTO advertDTO){
+        Advert advert = modelMapper.map(advertDTO, Advert.class);
+        return modelMapper.map(advertRepository.save(advert), AdvertDTO.class);
+    }
 }
