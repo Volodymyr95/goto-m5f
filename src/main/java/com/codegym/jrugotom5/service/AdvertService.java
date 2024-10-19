@@ -6,6 +6,7 @@ import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +35,7 @@ public class AdvertService {
     }
 
     public List<AdvertBasicInfoDTO> getAllAdverts() {
-        List<Advert> allAdverts = (List<Advert>) advertRepository.findAll();
-        return allAdverts.stream()
+        return Streamable.of(advertRepository.findAll()).stream()
                 .map(advert->modelMapper.map(advert, AdvertBasicInfoDTO.class))
                 .toList();
     }
