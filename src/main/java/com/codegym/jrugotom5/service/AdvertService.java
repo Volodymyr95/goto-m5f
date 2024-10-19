@@ -35,7 +35,7 @@ public class AdvertService {
     }
 
     public List<AdvertBasicInfoDTO> getAllAdverts() {
-        return Streamable.of(advertRepository.findAll()).stream()
+        return Streamable.of(advertRepository.findAll())
                 .map(advert->modelMapper.map(advert, AdvertBasicInfoDTO.class))
                 .toList();
     }
