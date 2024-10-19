@@ -1,18 +1,17 @@
 package com.codegym.jrugotom5.dto;
 
-import com.codegym.jrugotom5.entity.User;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDate;
 
-@Setter
-@Getter
+@Data
+@Builder
 public class AdvertDTO {
     private Long id;
     private String title;
     private String description;
-    private Long userId;
+    private Long userCreatorId;
     private LocalDate createdDate;
     private LocalDate endDate;
 }
