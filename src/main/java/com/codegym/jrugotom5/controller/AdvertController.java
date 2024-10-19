@@ -13,17 +13,17 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/adverts")
 @RequiredArgsConstructor
 public class AdvertController {
     private final AdvertService advertService;
 
-    @GetMapping(path = "/adverts")
+    @GetMapping()
     public List<AdvertBasicInfoDTO> getAllAdverts() {
         return advertService.getAllAdverts();
     }
 
-    @GetMapping(path = "/advert")
+    @GetMapping(path = "/date")
     public List<AdvertDTO> getAdverts(@RequestParam LocalDate from, LocalDate to) {
         return advertService.getAdvertsByDateRange(from, to);
     }
