@@ -1,7 +1,10 @@
 package com.codegym.jrugotom5.service;
 
+import com.codegym.jrugotom5.dto.AdvertCreateDTO;
 import com.codegym.jrugotom5.dto.AdvertDTO;
 import com.codegym.jrugotom5.entity.Advert;
+import com.codegym.jrugotom5.entity.User;
+import com.codegym.jrugotom5.exception.UserNotFoundException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AdvertServiceTest {
 
@@ -25,6 +28,9 @@ class AdvertServiceTest {
 
     @Mock
     private ModelMapper modelMapper;
+
+    @Mock
+    private UserService userService;
 
     @InjectMocks
     private AdvertService advertService;
@@ -78,6 +84,43 @@ class AdvertServiceTest {
         });
 
         assertEquals("'From' date should be after 'To' date.", exception.getMessage());
+    }
+
+    @Test
+    void createAdvert_userExists_advertCreatedSuccessfully() {
+        AdvertCreateDTO advertCreateDTO = new AdvertCreateDTO();
+        advertCreateDTO.setTitle("Test Title");
+        advertCreateDTO.setDescription("Test Description");
+        advertCreateDTO.setCreatedBy(new User());
+        advertCreateDTO.getCreatedBy().setId(1L);
+        advertCreateDTO.setEndDate(LocalDate.now().plusDays(10));
+        advertCreateDTO.setIsActive(true);
+
+        when(userService.userExistsById(1L)).thenReturn(true);
+
+        Advert advertEntity = new Advert();
+        when(modelMapper.map(advertCreateDTO, Advert.class)).thenReturn(advertEntity);
+
+        advertService.createAdvert(advertCreateDTO);
+
+        verify(advertRepository, times(1)).save(any(Advert.class));
+    }
+
+    @Test
+    void createAdvert_userNotFound_throwsUserNotFoundException() {
+        AdvertCreateDTO advertCreateDTO = new AdvertCreateDTO();
+        advertCreateDTO.setTitle("Test Title");
+        advertCreateDTO.setDescription("Test Description");
+        advertCreateDTO.setCreatedBy(new User());
+        advertCreateDTO.getCreatedBy().setId(1L);
+        advertCreateDTO.setEndDate(LocalDate.now().plusDays(10));
+        advertCreateDTO.setIsActive(true);
+
+        when(userService.userExistsById(1L)).thenReturn(false);
+
+        assertThrows(UserNotFoundException.class, () -> advertService.createAdvert(advertCreateDTO));
+
+        verify(advertRepository, never()).save(any(Advert.class));
     }
 
 }
