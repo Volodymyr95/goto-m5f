@@ -1,12 +1,14 @@
 package com.codegym.jrugotom5.dto;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
 @Data
-@Builder
+@SuperBuilder
+@NoArgsConstructor
 public class AdvertDTO {
     private Long id;
     private String title;
