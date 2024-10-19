@@ -1,5 +1,6 @@
 package com.codegym.jrugotom5.service;
 
+import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertDTO;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.repository.AdvertRepository;
@@ -17,7 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class AdvertServiceTest {
+public class AdvertServiceTest {
     @Mock
     private AdvertRepository advertRepository;
 
@@ -27,9 +28,27 @@ class AdvertServiceTest {
     private AdvertService advertService;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
         advertService = new AdvertService(advertRepository, modelMapper);
+    }
+
+    @Test
+    public void testGetAllAdverts_OneAdvert() {
+        AdvertBasicInfoDTO expectedDto = new AdvertBasicInfoDTO();
+        expectedDto.setId(1L);
+        expectedDto.setTitle("Test title");
+        expectedDto.setCreatedDate(LocalDate.of(2024, 1, 1));
+        expectedDto.setIsActive(true);
+
+        when(advertRepository.findAll()).thenReturn(List.of(new Advert()));
+        when(modelMapper.map(any(Advert.class), eq(AdvertBasicInfoDTO.class))).thenReturn(expectedDto);
+
+        List<AdvertBasicInfoDTO> dtoListFromService = advertService.getAllAdverts();
+
+        assertEquals(List.of(expectedDto), dtoListFromService);
+
+        verify(advertRepository).findAll();
     }
 
     @Test
@@ -63,7 +82,6 @@ class AdvertServiceTest {
 
         String assertMessage = "The adverts list should match the expected list in both order and content";
         assertIterableEquals(expectedDtoList, dtoListFromService, assertMessage);
-
     }
 
     @Test
