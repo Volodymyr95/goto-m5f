@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface AdvertRepository extends CrudRepository<Advert, Long> {
     List<Advert> findAllByCreatedDateBetweenFromTo(LocalDate from, LocalDate to);
+    
+    List<Advert> getAdvertsByCreatedBy_Id (Long createdBy_id);
 }
