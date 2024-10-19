@@ -1,4 +1,4 @@
-package com.codegym.jrugotom5.exception;
+package com.codejym.jrugotom5.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
