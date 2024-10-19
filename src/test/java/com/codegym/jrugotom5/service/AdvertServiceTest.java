@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AdvertServiceTest {
     @Mock
@@ -59,9 +59,11 @@ class AdvertServiceTest {
             when(modelMapper.map(advert, AdvertDTO.class)).thenReturn(advertDTO);
         }
         List<AdvertDTO> dtoListFromService = advertService.getAdvertsByDateRange(from, to);
+        verify(advertRepository).findAllByCreatedDateBetween(from, to);
 
         String assertMessage = "The adverts list should match the expected list in both order and content";
         assertIterableEquals(expectedDtoList, dtoListFromService, assertMessage);
+
     }
 
     @Test
