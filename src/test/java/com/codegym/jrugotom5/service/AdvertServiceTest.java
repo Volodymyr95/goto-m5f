@@ -122,7 +122,7 @@ class AdvertServiceTest {
 
         advertService.createAdvert(advertCreateDTO);
 
-        verify(advertRepository, times(1)).save(any(Advert.class));
+        verify(advertRepository).save(any(Advert.class));
     }
 
     @Test
