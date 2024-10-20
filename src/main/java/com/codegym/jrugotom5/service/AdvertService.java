@@ -1,14 +1,16 @@
 package com.codegym.jrugotom5.service;
 
+import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertCreateDTO;
 import com.codegym.jrugotom5.dto.AdvertDTO;
 import com.codegym.jrugotom5.entity.Advert;
+import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.UserNotFoundException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
-import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,13 +39,19 @@ public class AdvertService {
                 .collect(Collectors.toList());
     }
 
+    public List<AdvertBasicInfoDTO> getAllAdverts() {
+        return Streamable.of(advertRepository.findAll())
+                .map(advert->modelMapper.map(advert, AdvertBasicInfoDTO.class))
+                .toList();
+    }
+
     @Transactional
-    public void createAdvert(AdvertCreateDTO advert) {
-        if(!userService.userExistsById(advert.getCreatedBy().getId())) {
-            log.error("Could not find User with id {}", advert.getCreatedBy().getId());
-            throw new UserNotFoundException("User with id " + advert.getCreatedBy().getId() + " does not exist.");
+    public void createAdvert(AdvertCreateDTO advertCreateDTO) {
+        if(!userService.userExistsById(advertCreateDTO.getCreatedBy().getId())) {
+            log.error("Could not find User with id {}", advertCreateDTO.getCreatedBy().getId());
+            throw new UserNotFoundException("User with id " + advertCreateDTO.getCreatedBy().getId() + " does not exist.");
         }
-        Advert advertEntity = modelMapper.map(advert, Advert.class);
+        Advert advertEntity = modelMapper.map(advertCreateDTO, Advert.class);
         advertEntity.setCreatedDate(LocalDate.now());
         advertRepository.save(advertEntity);
     }
