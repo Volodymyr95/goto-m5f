@@ -7,6 +7,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface AdvertRepository extends CrudRepository<Advert, Long> {
-    List<Advert> findAllByCreatedDateBetweenFromTo(LocalDate from, LocalDate to);
-    List<Advert> findByCategory (String category);
+    List<Advert> findAllByCreatedDateBetween(LocalDate from, LocalDate to);
+    List<Advert> findAllByCategory (String category);
 }
