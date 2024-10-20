@@ -30,4 +30,9 @@ public class AdvertController {
     public List<AdvertBasicInfoDTO> getByCategory(@PathVariable String category) {
         return advertService.getByCategory(category);
     }
+
+    @GetMapping("/adverts")
+    public List<AdvertBasicInfoDTO> getByTitleContains(@RequestParam(value = "title") String phrase) {
+        return advertService.getByTitleContains(phrase);
+    }
 }
