@@ -27,7 +27,7 @@ public class AdvertService {
         if (from.isAfter(to) || from.isEqual(to)) {
             throw new InvalidDateRangeException("'From' date should be after 'To' date.");
         }
-        List<Advert> adverts = this.advertRepository.findAllByCreatedDateBetweenFromTo(from, to);
+        List<Advert> adverts = this.advertRepository.findAllByCreatedDateBetween(from, to);
 
         return adverts.stream()
                 .map(advert -> modelMapper.map(advert, AdvertDTO.class))
@@ -39,9 +39,11 @@ public class AdvertService {
                 .map(advert->modelMapper.map(advert, AdvertBasicInfoDTO.class))
                 .toList();
     }
-    private final AdvertRepository advertRepository;
 
-    public List<Advert> getByCategory(String category) {
-        return advertRepository.findByCategory(category);
+    public List<AdvertBasicInfoDTO> getByCategory(String category) {
+        return advertRepository.findAllByCategory(category)
+                .stream()
+                .map(advert -> modelMapper.map(advert, AdvertBasicInfoDTO.class))
+                .toList();
     }
 }
