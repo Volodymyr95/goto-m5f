@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,7 +75,7 @@ public class AdvertServiceTest {
         advertDTO2.setId(2L);
         advertDTO2.setTitle("Advert 2");
 
-        when(advertRepository.findAllByCreatedDateBetweenFromTo(from, to)).thenReturn(adverts);
+        when(advertRepository.findAllByCreatedDateBetween(from, to)).thenReturn(adverts);
         when(modelMapper.map(advert1, AdvertDTO.class)).thenReturn(advertDTO1);
         when(modelMapper.map(advert2, AdvertDTO.class)).thenReturn(advertDTO2);
 
@@ -95,5 +96,34 @@ public class AdvertServiceTest {
         });
 
         assertEquals("'From' date should be after 'To' date.", exception.getMessage());
+    }
+
+    @Test
+    void getByCategory_ShouldReturnListOfAdverts_WhenCategoryExists() {
+        String category = "Electronics";
+        List<Advert> adverts = List.of(new Advert(), new Advert());
+        List<AdvertBasicInfoDTO> expectedDTOs = List.of(new AdvertBasicInfoDTO(), new AdvertBasicInfoDTO());
+
+        when(advertRepository.findAllByCategory(category)).thenReturn(adverts);
+        when(modelMapper.map(any(Advert.class), eq(AdvertBasicInfoDTO.class)))
+                .thenReturn(new AdvertBasicInfoDTO());
+
+        List<AdvertBasicInfoDTO> result = advertService.getByCategory(category);
+
+        assertEquals(expectedDTOs, result);
+        verify(advertRepository).findAllByCategory(category);
+        verify(modelMapper, times(2)).map(any(Advert.class), eq(AdvertBasicInfoDTO.class));
+    }
+
+    @Test
+    void getByCategory_ShouldReturnEmptyList_WhenCategoryDoesNotExist() {
+        String category = "NonExistingCategory";
+        when(advertRepository.findAllByCategory(category)).thenReturn(Collections.emptyList());
+
+        List<AdvertBasicInfoDTO> result = advertService.getByCategory(category);
+
+        assertTrue(result.isEmpty());
+        verify(advertRepository).findAllByCategory(category);
+        verify(modelMapper, never()).map(any(), eq(AdvertBasicInfoDTO.class));
     }
 }
