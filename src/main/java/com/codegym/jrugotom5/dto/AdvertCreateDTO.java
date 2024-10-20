@@ -1,6 +1,5 @@
 package com.codegym.jrugotom5.dto;
 
-import com.codegym.jrugotom5.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.validation.constraints.NotNull;
@@ -20,7 +19,7 @@ public class AdvertCreateDTO {
     private String description;
 
     @NotNull
-    private User createdBy;
+    private Long authorId;
 
     private LocalDate createdDate;
 

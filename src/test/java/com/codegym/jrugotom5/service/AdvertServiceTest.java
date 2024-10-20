@@ -4,10 +4,9 @@ import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertCreateDTO;
 import com.codegym.jrugotom5.dto.AdvertDTO;
 import com.codegym.jrugotom5.entity.Advert;
-import com.codegym.jrugotom5.entity.User;
+import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.UserNotFoundException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
-import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -110,8 +109,7 @@ class AdvertServiceTest {
         AdvertCreateDTO advertCreateDTO = new AdvertCreateDTO();
         advertCreateDTO.setTitle("Test Title");
         advertCreateDTO.setDescription("Test Description");
-        advertCreateDTO.setCreatedBy(new User());
-        advertCreateDTO.getCreatedBy().setId(1L);
+        advertCreateDTO.setAuthorId(1L);
         advertCreateDTO.setEndDate(LocalDate.now().plusDays(10));
         advertCreateDTO.setIsActive(true);
 
@@ -130,8 +128,7 @@ class AdvertServiceTest {
         AdvertCreateDTO advertCreateDTO = new AdvertCreateDTO();
         advertCreateDTO.setTitle("Test Title");
         advertCreateDTO.setDescription("Test Description");
-        advertCreateDTO.setCreatedBy(new User());
-        advertCreateDTO.getCreatedBy().setId(1L);
+        advertCreateDTO.setAuthorId(1L);
         advertCreateDTO.setEndDate(LocalDate.now().plusDays(10));
         advertCreateDTO.setIsActive(true);
 

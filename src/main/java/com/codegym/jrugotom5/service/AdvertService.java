@@ -47,9 +47,9 @@ public class AdvertService {
 
     @Transactional
     public void createAdvert(AdvertCreateDTO advertCreateDTO) {
-        if(!userService.userExistsById(advertCreateDTO.getCreatedBy().getId())) {
-            log.error("Could not find User with id {}", advertCreateDTO.getCreatedBy().getId());
-            throw new UserNotFoundException("User with id " + advertCreateDTO.getCreatedBy().getId() + " does not exist.");
+        if(!userService.userExistsById(advertCreateDTO.getAuthorId())) {
+            log.error("Could not find User with id {}", advertCreateDTO.getAuthorId());
+            throw new UserNotFoundException("User with id " + advertCreateDTO.getAuthorId() + " does not exist.");
         }
         Advert advertEntity = modelMapper.map(advertCreateDTO, Advert.class);
         advertEntity.setCreatedDate(LocalDate.now());
