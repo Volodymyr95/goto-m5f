@@ -1,9 +1,12 @@
 package com.codegym.jrugotom5.service;
 
 import com.codegym.jrugotom5.dto.AdvertDTO;
+import com.codegym.jrugotom5.dto.AdvertUpdateDTO;
 import com.codegym.jrugotom5.entity.Advert;
-import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
+import com.codegym.jrugotom5.exception.InvalidIdException;
+import com.codegym.jrugotom5.repository.AdvertRepository;
+import com.codegym.jrugotom5.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,9 +17,10 @@ import org.modelmapper.ModelMapper;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AdvertServiceTest {
 
@@ -25,6 +29,8 @@ class AdvertServiceTest {
 
     @Mock
     private ModelMapper modelMapper;
+    @Mock
+    private  UserRepository userRepository;
 
     @InjectMocks
     private AdvertService advertService;
@@ -78,6 +84,61 @@ class AdvertServiceTest {
         });
 
         assertEquals("'From' date should be after 'To' date.", exception.getMessage());
+    }
+
+    @Test
+    void testSuccessfulUpdate() {
+
+        Long advertId = 1L;
+        AdvertUpdateDTO advertDTO = new AdvertUpdateDTO();
+        advertDTO.setTitle("Updated Title");
+        advertDTO.setDescription("Updated Description");
+
+        Advert existingAdvert = new Advert();
+        existingAdvert.setId(advertId);
+        existingAdvert.setTitle("Old Title");
+        existingAdvert.setDescription("Old Description");
+
+        Advert savedAdvert = new Advert();
+        savedAdvert.setId(advertId);
+        savedAdvert.setTitle("Updated Title");
+        savedAdvert.setDescription("Updated Description");
+
+        AdvertUpdateDTO mappedAdvertDTO = new AdvertUpdateDTO();
+        mappedAdvertDTO.setTitle("Updated Title");
+        mappedAdvertDTO.setDescription("Updated Description");
+
+
+        when(advertRepository.findById(advertId)).thenReturn(Optional.of(existingAdvert));
+        when(advertRepository.save(existingAdvert)).thenReturn(savedAdvert);
+        when(modelMapper.map(savedAdvert, AdvertUpdateDTO.class)).thenReturn(mappedAdvertDTO);
+
+
+        AdvertUpdateDTO result = advertService.update(advertId, advertDTO);
+
+
+        assertNotNull(result);
+        assertEquals("Updated Title", result.getTitle());
+        assertEquals("Updated Description", result.getDescription());
+
+
+        verify(advertRepository, times(1)).findById(advertId);
+        verify(advertRepository, times(1)).save(existingAdvert);
+    }
+
+    @Test
+    void testAdvertNotFound() {
+
+        Long advertId = 1L;
+        AdvertUpdateDTO advertDTO = new AdvertUpdateDTO();
+        advertDTO.setTitle("Updated Title");
+        advertDTO.setDescription("Updated Description");
+
+        when(advertRepository.findById(advertId)).thenReturn(Optional.empty());
+
+        assertThrows(InvalidIdException.class, () -> advertService.update(advertId, advertDTO));
+
+        verify(advertRepository, never()).save(any(Advert.class));
     }
 
 }

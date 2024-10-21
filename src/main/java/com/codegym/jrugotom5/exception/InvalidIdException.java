@@ -1,0 +1,7 @@
+package com.codegym.jrugotom5.exception;
+
+public class InvalidIdException extends RuntimeException{
+    public InvalidIdException(String message){
+        super(message);
+    }
+}

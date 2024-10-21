@@ -1,9 +1,11 @@
 package com.codegym.jrugotom5.service;
 
 import com.codegym.jrugotom5.dto.AdvertDTO;
+import com.codegym.jrugotom5.dto.AdvertUpdateDTO;
 import com.codegym.jrugotom5.entity.Advert;
-import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
+import com.codegym.jrugotom5.exception.InvalidIdException;
+import com.codegym.jrugotom5.repository.AdvertRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ public class AdvertService {
     private final AdvertRepository advertRepository;
     private final ModelMapper modelMapper;
 
+
     public List<AdvertDTO> getAdvertsByDateRange(LocalDate from, LocalDate to) {
 
         if (from.isAfter(to) || from.isEqual(to)) {
@@ -30,8 +33,13 @@ public class AdvertService {
                 .map(advert -> modelMapper.map(advert, AdvertDTO.class))
                 .collect(Collectors.toList());
     }
-    public AdvertDTO update(AdvertDTO advertDTO){
-        Advert advert = modelMapper.map(advertDTO, Advert.class);
-        return modelMapper.map(advertRepository.save(advert), AdvertDTO.class);
+    public AdvertUpdateDTO update(Long id, AdvertUpdateDTO advertDTO ){
+
+       Advert advert = advertRepository.findById(id)
+                .orElseThrow(() -> new InvalidIdException("Advert not found with ID: "));
+       advert.setDescription(advertDTO.getDescription());
+       advert.setTitle(advertDTO.getTitle());
+       Advert savedAdvert = advertRepository.save(advert);
+       return modelMapper.map(savedAdvert, AdvertUpdateDTO.class);
     }
 }
