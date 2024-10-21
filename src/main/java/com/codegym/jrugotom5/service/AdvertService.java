@@ -53,6 +53,7 @@ public class AdvertService {
         }
         Advert advertEntity = modelMapper.map(advertCreateDTO, Advert.class);
         advertEntity.setCreatedDate(LocalDate.now());
+        advertEntity.setCreatedBy(userService.getUserById(advertCreateDTO.getAuthorId()));
         advertRepository.save(advertEntity);
     }
 }
