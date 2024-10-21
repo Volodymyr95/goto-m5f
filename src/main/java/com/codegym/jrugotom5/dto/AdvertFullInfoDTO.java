@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Data
 @SuperBuilder
 @NoArgsConstructor
-public class AdvertDTO {
+public class AdvertFullInfoDTO {
     private Long id;
     private String title;
     private String description;

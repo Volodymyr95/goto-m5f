@@ -1,7 +1,7 @@
 package com.codegym.jrugotom5.service;
 
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
-import com.codegym.jrugotom5.dto.AdvertDTO;
+import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
@@ -58,7 +58,7 @@ public class AdvertServiceTest {
 
         int numberOfAdverts = 2;
         List<Advert> adverts = new ArrayList<>(numberOfAdverts);
-        List<AdvertDTO> expectedDtoList = new ArrayList<>(numberOfAdverts);
+        List<AdvertFullInfoDTO> expectedDtoList = new ArrayList<>(numberOfAdverts);
 
         when(advertRepository.findAllByCreatedDateBetween(from, to)).thenReturn(adverts);
 
@@ -70,14 +70,14 @@ public class AdvertServiceTest {
             advert.setTitle(advertTitle);
             adverts.add(advert);
 
-            AdvertDTO advertDTO = new AdvertDTO();
-            advertDTO.setId((long) i);
-            advertDTO.setTitle(advertTitle);
-            expectedDtoList.add(advertDTO);
+            AdvertFullInfoDTO advertFullInfoDTO = new AdvertFullInfoDTO();
+            advertFullInfoDTO.setId((long) i);
+            advertFullInfoDTO.setTitle(advertTitle);
+            expectedDtoList.add(advertFullInfoDTO);
 
-            when(modelMapper.map(advert, AdvertDTO.class)).thenReturn(advertDTO);
+            when(modelMapper.map(advert, AdvertFullInfoDTO.class)).thenReturn(advertFullInfoDTO);
         }
-        List<AdvertDTO> dtoListFromService = advertService.getAdvertsByDateRange(from, to);
+        List<AdvertFullInfoDTO> dtoListFromService = advertService.getAdvertsByDateRange(from, to);
         verify(advertRepository).findAllByCreatedDateBetween(from, to);
 
         String assertMessage = "The adverts list should match the expected list in both order and content";
