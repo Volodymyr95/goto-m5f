@@ -1,6 +1,5 @@
 package com.codegym.jrugotom5.dto;
 
-import com.codegym.jrugotom5.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 
