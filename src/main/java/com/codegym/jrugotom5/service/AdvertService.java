@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AdvertService {
 
+    private final Integer DAYS_TO_END = 30;
     private final AdvertRepository advertRepository;
     private final ModelMapper modelMapper;
     private final UserService userService;
@@ -46,22 +47,21 @@ public class AdvertService {
 
     public List<AdvertBasicInfoDTO> getAllAdverts() {
         return Streamable.of(advertRepository.findAll())
-                .map(advert->modelMapper.map(advert, AdvertBasicInfoDTO.class))
+                .map(advert -> modelMapper.map(advert, AdvertBasicInfoDTO.class))
                 .toList();
     }
 
     @Transactional
     public AdvertFullInfoDTO createAdvert(AdvertCreateDTO advertCreateDTO) {
         Long id = advertCreateDTO.getUserCreatorId();
-        if(!userService.userExistsById(id)) {
+        if (!userService.userExistsById(id)) {
             log.error("Could not find User with id {}", id);
             throw new UserNotFoundException("User with id " + id + " does not exist.");
         }
         Advert advertEntity = modelMapper.map(advertCreateDTO, Advert.class);
         advertEntity.setCreatedDate(LocalDate.now());
-        advertEntity.setEndDate(LocalDate.now().plusDays(30));
+        advertEntity.setEndDate(LocalDate.now().plusDays(DAYS_TO_END));
         advertEntity.setCreatedBy(userService.getUserById(id));
-        advertRepository.save(advertEntity);
-        return modelMapper.map(advertEntity, AdvertFullInfoDTO.class);
+        return modelMapper.map(advertRepository.save(advertEntity), AdvertFullInfoDTO.class);
     }
 }
