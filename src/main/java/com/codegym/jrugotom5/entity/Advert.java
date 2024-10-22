@@ -31,5 +31,6 @@ public class Advert {
     @Column(name = "is_active")
     private Boolean isActive;
 
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 }

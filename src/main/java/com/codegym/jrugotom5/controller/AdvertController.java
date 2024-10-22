@@ -1,13 +1,11 @@
 package com.codegym.jrugotom5.controller;
 
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
-import com.codegym.jrugotom5.dto.AdvertDTO;
+import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
+import com.codegym.jrugotom5.entity.Category;
 import com.codegym.jrugotom5.service.AdvertService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,6 +28,7 @@ public class AdvertController {
 
     @GetMapping("/{category}/")
     public List<AdvertBasicInfoDTO> getByCategory(@PathVariable String category) {
-        return advertService.getByCategory(category);
+        Category enumCategory = Category.valueOf(category.toUpperCase());
+        return advertService.getByCategory(enumCategory);
     }
 }
