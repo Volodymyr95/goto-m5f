@@ -3,6 +3,7 @@ package com.codegym.jrugotom5.controller;
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.entity.Category;
+import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.service.AdvertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,11 @@ public class AdvertController {
 
     @GetMapping("/{category}/")
     public List<AdvertBasicInfoDTO> getByCategory(@PathVariable String category) {
-        Category enumCategory = Category.valueOf(category.toUpperCase());
-        return advertService.getByCategory(enumCategory);
+        try {
+            Category enumCategory = Category.valueOf(category.toUpperCase());
+            return advertService.getByCategory(enumCategory);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidCategoryException("Invalid category: %s".formatted(category));
+        }
     }
 }
