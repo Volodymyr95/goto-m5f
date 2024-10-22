@@ -1,8 +1,8 @@
 package com.codegym.jrugotom5.service;
 
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
+import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertCreateDTO;
-import com.codegym.jrugotom5.dto.AdvertDTO;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.UserNotFoundException;
@@ -15,7 +15,7 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,33 +63,32 @@ class AdvertServiceTest {
         LocalDate from = LocalDate.of(2023, 1, 1);
         LocalDate to = LocalDate.of(2023, 12, 31);
 
-        Advert advert1 = new Advert();
-        advert1.setId(1L);
-        advert1.setTitle("Advert 1");
+        int numberOfAdverts = 2;
+        List<Advert> adverts = new ArrayList<>(numberOfAdverts);
+        List<AdvertFullInfoDTO> expectedDtoList = new ArrayList<>(numberOfAdverts);
 
-        Advert advert2 = new Advert();
-        advert2.setId(2L);
-        advert2.setTitle("Advert 2");
+        when(advertRepository.findAllByCreatedDateBetween(from, to)).thenReturn(adverts);
 
-        List<Advert> adverts = Arrays.asList(advert1, advert2);
+        for (int i = 0; i < numberOfAdverts; i++) {
+            String advertTitle = "Advert " + i;
 
-        AdvertDTO advertDTO1 = new AdvertDTO();
-        advertDTO1.setId(1L);
-        advertDTO1.setTitle("Advert 1");
+            Advert advert = new Advert();
+            advert.setId((long) i);
+            advert.setTitle(advertTitle);
+            adverts.add(advert);
 
-        AdvertDTO advertDTO2 = new AdvertDTO();
-        advertDTO2.setId(2L);
-        advertDTO2.setTitle("Advert 2");
+            AdvertFullInfoDTO advertFullInfoDTO = new AdvertFullInfoDTO();
+            advertFullInfoDTO.setId((long) i);
+            advertFullInfoDTO.setTitle(advertTitle);
+            expectedDtoList.add(advertFullInfoDTO);
 
-        when(advertRepository.findAllByCreatedDateBetweenFromTo(from, to)).thenReturn(adverts);
-        when(modelMapper.map(advert1, AdvertDTO.class)).thenReturn(advertDTO1);
-        when(modelMapper.map(advert2, AdvertDTO.class)).thenReturn(advertDTO2);
+            when(modelMapper.map(advert, AdvertFullInfoDTO.class)).thenReturn(advertFullInfoDTO);
+        }
+        List<AdvertFullInfoDTO> dtoListFromService = advertService.getAdvertsByDateRange(from, to);
+        verify(advertRepository).findAllByCreatedDateBetween(from, to);
 
-        List<AdvertDTO> actualAdverts = advertService.getAdvertsByDateRange(from, to);
-
-        List<AdvertDTO> expectedAdverts = Arrays.asList(advertDTO1, advertDTO2);
-
-        assertIterableEquals(expectedAdverts, actualAdverts, "The adverts list should match the expected list in both order and content");
+        String assertMessage = "The adverts list should match the expected list in both order and content";
+        assertIterableEquals(expectedDtoList, dtoListFromService, assertMessage);
     }
 
     @Test
