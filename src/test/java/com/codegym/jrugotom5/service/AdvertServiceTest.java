@@ -3,6 +3,7 @@ package com.codegym.jrugotom5.service;
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.entity.Advert;
+import com.codegym.jrugotom5.entity.Category;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import org.junit.jupiter.api.BeforeEach;
@@ -98,7 +99,7 @@ public class AdvertServiceTest {
 
     @Test
     void getByCategory_ShouldReturnListOfAdverts_WhenCategoryExists() {
-        String category = "Electronics";
+        Category category = Category.ELECTRONICS;
         List<Advert> adverts = List.of(new Advert(), new Advert());
         List<AdvertBasicInfoDTO> expectedDTOs = List.of(new AdvertBasicInfoDTO(), new AdvertBasicInfoDTO());
 
@@ -113,15 +114,4 @@ public class AdvertServiceTest {
         verify(modelMapper, times(2)).map(any(Advert.class), eq(AdvertBasicInfoDTO.class));
     }
 
-    @Test
-    void getByCategory_ShouldReturnEmptyList_WhenCategoryDoesNotExist() {
-        String category = "NonExistingCategory";
-        when(advertRepository.findAllByCategory(category)).thenReturn(Collections.emptyList());
-
-        List<AdvertBasicInfoDTO> result = advertService.getByCategory(category);
-
-        assertTrue(result.isEmpty());
-        verify(advertRepository).findAllByCategory(category);
-        verify(modelMapper, never()).map(any(), eq(AdvertBasicInfoDTO.class));
-    }
 }
