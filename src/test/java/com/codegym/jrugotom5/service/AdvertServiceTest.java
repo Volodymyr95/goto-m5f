@@ -108,9 +108,7 @@ class AdvertServiceTest {
         AdvertCreateDTO advertCreateDTO = new AdvertCreateDTO();
         advertCreateDTO.setTitle("Test Title");
         advertCreateDTO.setDescription("Test Description");
-        advertCreateDTO.setAuthorId(1L);
-        advertCreateDTO.setEndDate(LocalDate.now().plusDays(10));
-        advertCreateDTO.setIsActive(true);
+        advertCreateDTO.setUserCreatorId(1L);
 
         when(userService.userExistsById(1L)).thenReturn(true);
 
@@ -127,9 +125,7 @@ class AdvertServiceTest {
         AdvertCreateDTO advertCreateDTO = new AdvertCreateDTO();
         advertCreateDTO.setTitle("Test Title");
         advertCreateDTO.setDescription("Test Description");
-        advertCreateDTO.setAuthorId(1L);
-        advertCreateDTO.setEndDate(LocalDate.now().plusDays(10));
-        advertCreateDTO.setIsActive(true);
+        advertCreateDTO.setUserCreatorId(1L);
 
         when(userService.userExistsById(1L)).thenReturn(false);
 

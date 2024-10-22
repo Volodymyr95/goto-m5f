@@ -1,16 +1,13 @@
 package com.codegym.jrugotom5.controller;
 
-import com.codegym.jrugotom5.dto.AdvertCreateDTO;
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
+import com.codegym.jrugotom5.dto.AdvertCreateDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
-import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.service.AdvertService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -34,7 +31,8 @@ public class AdvertController {
     }
 
     @PostMapping("/new")
-    public void createAdvert(@RequestBody @Valid AdvertCreateDTO advert) {
-        advertService.createAdvert(advert);
+    public ResponseEntity<AdvertFullInfoDTO> createAdvert(@RequestBody @Valid AdvertCreateDTO advertCreateDTO) {
+        AdvertFullInfoDTO advertFullInfoDTO = advertService.createAdvert(advertCreateDTO);
+        return new ResponseEntity<>(advertFullInfoDTO, HttpStatus.CREATED);
     }
 }
