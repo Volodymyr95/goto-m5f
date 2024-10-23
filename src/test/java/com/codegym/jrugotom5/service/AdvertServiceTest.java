@@ -95,4 +95,22 @@ public class AdvertServiceTest {
 
         assertEquals("'From' date should be after 'To' date.", exception.getMessage());
     }
+
+    @Test
+    void getByTitleContains_ShouldReturnListOfAdverts_WhenAdvertsWithPhraseFoundInDb() {
+        String phrase = "Laptop";
+        List<Advert> adverts = List.of(new Advert(), new Advert());
+        List<AdvertBasicInfoDTO> expectedDTOs = List.of(new AdvertBasicInfoDTO(), new AdvertBasicInfoDTO());
+
+        when(advertRepository.findAllByTitleContainsIgnoreCase(phrase)).thenReturn(adverts);
+        when(modelMapper.map(any(Advert.class), eq(AdvertBasicInfoDTO.class)))
+                .thenReturn(new AdvertBasicInfoDTO());
+
+        List<AdvertBasicInfoDTO> result = advertService.getByTitleContains(phrase);
+
+        assertEquals(expectedDTOs.size(), result.size());
+        verify(advertRepository).findAllByTitleContainsIgnoreCase(phrase);
+        verify(modelMapper, times(2)).map(any(Advert.class), eq(AdvertBasicInfoDTO.class));
+    }
+
 }
