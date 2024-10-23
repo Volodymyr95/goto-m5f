@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidCategoryException.class)
     public ResponseEntity<String> handleInvalidCategoryException(InvalidCategoryException e) {
-        log.error("Occurred Exception: {} ", e.getMessage());
+        log.error("Occurred Exception: {} ", e.getMessage(), e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
