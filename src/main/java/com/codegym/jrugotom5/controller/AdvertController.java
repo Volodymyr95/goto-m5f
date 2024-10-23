@@ -30,7 +30,7 @@ public class AdvertController {
         return advertService.getAdvertsByDateRange(from, to);
     }
 
-    @PostMapping("/POST")
+    @PostMapping
     public ResponseEntity<AdvertFullInfoDTO> createAdvert(@RequestBody @Valid AdvertCreateDTO advertCreateDTO) {
         AdvertFullInfoDTO advertFullInfoDTO = advertService.createAdvert(advertCreateDTO);
         return new ResponseEntity<>(advertFullInfoDTO, HttpStatus.CREATED);
