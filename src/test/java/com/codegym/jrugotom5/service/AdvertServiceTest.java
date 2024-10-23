@@ -4,9 +4,11 @@ import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertCreateDTO;
 import com.codegym.jrugotom5.entity.Advert;
+import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.UserNotFoundException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
+import com.codegym.jrugotom5.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,11 +19,15 @@ import org.modelmapper.ModelMapper;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class AdvertServiceTest {
+
+    @Mock
+    private UserRepository userRepository;
 
     @Mock
     private AdvertRepository advertRepository;
@@ -111,6 +117,8 @@ class AdvertServiceTest {
         advertCreateDTO.setUserCreatorId(1L);
 
         when(userService.userExistsById(1L)).thenReturn(true);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(new User()));
 
         Advert advertEntity = new Advert();
         when(modelMapper.map(advertCreateDTO, Advert.class)).thenReturn(advertEntity);
