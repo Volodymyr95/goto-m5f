@@ -3,6 +3,7 @@ package com.codegym.jrugotom5.service;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.Category;
+import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import lombok.RequiredArgsConstructor;
@@ -46,10 +47,16 @@ public class AdvertService {
                 .toList();
     }
 
-    public List<AdvertBasicInfoDTO> getByCategory(Category category) {
-        return advertRepository.findAllByCategory(category)
-                .stream()
-                .map(advert -> modelMapper.map(advert, AdvertBasicInfoDTO.class))
-                .toList();
+    public List<AdvertBasicInfoDTO> getByCategory(String category) {
+        try {
+            Category enumCategory = Category.valueOf(category.toUpperCase());
+            return advertRepository.findAllByCategory(enumCategory)
+                    .stream()
+                    .map(advert -> modelMapper.map(advert, AdvertBasicInfoDTO.class))
+                    .toList();
+        } catch (IllegalArgumentException e) {
+            throw new InvalidCategoryException("Invalid category: %s".formatted(category));
+        }
+
     }
 }

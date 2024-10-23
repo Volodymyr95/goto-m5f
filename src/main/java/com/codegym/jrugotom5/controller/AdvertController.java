@@ -29,11 +29,7 @@ public class AdvertController {
 
     @GetMapping("/{category}/")
     public List<AdvertBasicInfoDTO> getByCategory(@PathVariable String category) {
-        try {
-            Category enumCategory = Category.valueOf(category.toUpperCase());
-            return advertService.getByCategory(enumCategory);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidCategoryException("Invalid category: %s".formatted(category));
-        }
+        return advertService.getByCategory(category);
+
     }
 }
