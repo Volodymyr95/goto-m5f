@@ -44,4 +44,11 @@ public class AdvertService {
                 .map(advert->modelMapper.map(advert, AdvertBasicInfoDTO.class))
                 .toList();
     }
+
+    public List<AdvertBasicInfoDTO> getByTitleContains(String phrase) {
+        return advertRepository.findAllByTitleContainsIgnoreCase(phrase)
+                .stream()
+                .map(advert -> modelMapper.map(advert, AdvertBasicInfoDTO.class))
+                .toList();
+    }
 }

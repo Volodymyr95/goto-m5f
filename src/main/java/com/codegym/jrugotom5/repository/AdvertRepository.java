@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface AdvertRepository extends CrudRepository<Advert, Long> {
     List<Advert> findAllByCreatedDateBetween(LocalDate from, LocalDate to);
+    List<Advert> findAllByTitleContainsIgnoreCase(String phrase);
 }
