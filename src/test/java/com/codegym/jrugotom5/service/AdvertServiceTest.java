@@ -5,6 +5,7 @@ import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
+import com.codegym.jrugotom5.exception.InvalidUserIdException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,6 @@ import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -105,31 +105,31 @@ public class AdvertServiceTest {
         Advert advert2 = new Advert();
         List<Advert> adverts = List.of(advert1, advert2);
 
+        List<AdvertInfoForCreatorDto> expected = new ArrayList<>();
+
         when(advertRepository.getAdvertsByCreatedById(userId)).thenReturn(adverts);
 
-        AdvertInfoForCreatorDto dto1 = new AdvertInfoForCreatorDto();
-        AdvertInfoForCreatorDto dto2 = new AdvertInfoForCreatorDto();
-
-        when(modelMapper.map(advert1, AdvertInfoForCreatorDto.class)).thenReturn(dto1);
-        when(modelMapper.map(advert2, AdvertInfoForCreatorDto.class)).thenReturn(dto2);
-
+        when(modelMapper.map(any(Advert.class), eq(AdvertInfoForCreatorDto.class)))
+                .thenAnswer(invocation -> {
+                    AdvertInfoForCreatorDto dto = new AdvertInfoForCreatorDto();
+                    expected.add(dto);
+                    return dto;
+                });
         List<AdvertInfoForCreatorDto> result = advertService.getAdvertsByUserId(userId);
 
-        assertEquals(2, result.size());
-        assertTrue(result.contains(dto1));
-        assertTrue(result.contains(dto2));
+        assertEquals(expected, result);
         verify(advertRepository).getAdvertsByCreatedById(userId);
     }
 
     @Test
-    void testGetAdvertsByCreateBy_NoAdverts_ReturnsEmptyList() {
-        Long userId = 1L;
-        when(advertRepository.getAdvertsByCreatedById(userId)).thenReturn(Collections.emptyList());
+    void testGetAdvertsByCreateBy_InvalidUserId_ReturnsException() {
+        Long invalidUserId = 0L;
+        AdvertService advertService = new AdvertService(advertRepository, modelMapper);
 
-        List<AdvertInfoForCreatorDto> result = advertService.getAdvertsByUserId(userId);
+        InvalidUserIdException exception = assertThrows(InvalidUserIdException.class, () -> {
+            advertService.getAdvertsByUserId(invalidUserId);
+        });
 
-        assertTrue(result.isEmpty());
-        verify(advertRepository).getAdvertsByCreatedById(userId);
+        assertEquals("User id must be greater than 0", exception.getMessage());
     }
-
 }
