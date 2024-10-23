@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<String> handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
-        log.error("Occurred Exception: {} ", e.getMessage());
+        log.error("Occurred Exception: {} ", e.getMessage(), e);
         return new ResponseEntity<>("Invalid URL: %s".formatted(e.getBody().getDetail()), HttpStatus.BAD_REQUEST);
     }
 }
