@@ -22,4 +22,8 @@ public class UserService {
                 .map(user -> modelMapper.map(user, UserBasicInfoDTO.class))
                 .toList();
     }
+
+    public boolean userExistsById(Long id) {
+        return userRepository.existsById(id);
+    }
 }

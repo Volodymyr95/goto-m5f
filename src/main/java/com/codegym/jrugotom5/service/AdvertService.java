@@ -1,15 +1,20 @@
 package com.codegym.jrugotom5.service;
 
+import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
+import com.codegym.jrugotom5.dto.AdvertCreateDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.entity.Advert;
-import com.codegym.jrugotom5.repository.AdvertRepository;
+import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
+import com.codegym.jrugotom5.exception.UserNotFoundException;
+import com.codegym.jrugotom5.repository.AdvertRepository;
+import com.codegym.jrugotom5.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
-import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.time.LocalDate;
@@ -19,8 +24,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class AdvertService {
+
+    private static final Integer DAYS_TO_END = 30;
     private final AdvertRepository advertRepository;
     private final ModelMapper modelMapper;
+    private final UserService userService;
+    private final UserRepository userRepository;
 
     public List<AdvertFullInfoDTO> getAdvertsByDateRange(LocalDate from, LocalDate to) {
 
@@ -41,7 +50,22 @@ public class AdvertService {
 
     public List<AdvertBasicInfoDTO> getAllAdverts() {
         return Streamable.of(advertRepository.findAll())
-                .map(advert->modelMapper.map(advert, AdvertBasicInfoDTO.class))
+                .map(advert -> modelMapper.map(advert, AdvertBasicInfoDTO.class))
                 .toList();
+    }
+
+    @Transactional
+    public AdvertFullInfoDTO createAdvert(AdvertCreateDTO advertCreateDTO) {
+        Long id = advertCreateDTO.getUserCreatorId();
+        if (!userService.userExistsById(id)) {
+            log.error("Could not find User with id {}", id);
+            throw new UserNotFoundException("User with id " + id + " does not exist.");
+        }
+        Advert advertEntity = modelMapper.map(advertCreateDTO, Advert.class);
+        advertEntity.setCreatedDate(LocalDate.now());
+        advertEntity.setEndDate(LocalDate.now().plusDays(DAYS_TO_END));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found."));
+        advertEntity.setCreatedBy(user);
+        return modelMapper.map(advertRepository.save(advertEntity), AdvertFullInfoDTO.class);
     }
 }
