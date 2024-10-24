@@ -2,9 +2,11 @@ package com.codegym.jrugotom5.service;
 
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
+import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
 import com.codegym.jrugotom5.entity.Advert;
-import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
+import com.codegym.jrugotom5.exception.InvalidUserIdException;
+import com.codegym.jrugotom5.repository.AdvertRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -94,5 +96,39 @@ public class AdvertServiceTest {
         });
 
         assertEquals("'From' date should be after 'To' date.", exception.getMessage());
+    }
+
+    @Test
+    void testGetAdvertsByCreateBy_WithAdverts_ReturnsDtoList() {
+        Long userId = 1L;
+        Advert advert1 = new Advert();
+        Advert advert2 = new Advert();
+        List<Advert> adverts = List.of(advert1, advert2);
+
+        List<AdvertInfoForCreatorDto> expected = new ArrayList<>();
+
+        when(advertRepository.getAdvertsByCreatedById(userId)).thenReturn(adverts);
+
+        when(modelMapper.map(any(Advert.class), eq(AdvertInfoForCreatorDto.class)))
+                .thenAnswer(invocation -> {
+                    AdvertInfoForCreatorDto dto = new AdvertInfoForCreatorDto();
+                    expected.add(dto);
+                    return dto;
+                });
+        List<AdvertInfoForCreatorDto> result = advertService.getAdvertsByUserId(userId);
+
+        assertEquals(expected, result);
+        verify(advertRepository).getAdvertsByCreatedById(userId);
+    }
+
+    @Test
+    void testGetAdvertsByCreateBy_InvalidUserId_ReturnsException() {
+        Long invalidUserId = 0L;
+
+        InvalidUserIdException exception = assertThrows(InvalidUserIdException.class, () -> {
+            advertService.getAdvertsByUserId(invalidUserId);
+        });
+
+        assertEquals("User id " + invalidUserId + " is invalid. Id must be greater than 0", exception.getMessage());
     }
 }

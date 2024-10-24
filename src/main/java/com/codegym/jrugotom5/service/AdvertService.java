@@ -1,18 +1,20 @@
 package com.codegym.jrugotom5.service;
 
+import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
+import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
 import com.codegym.jrugotom5.entity.Advert;
-import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
+import com.codegym.jrugotom5.exception.InvalidUserIdException;
+import com.codegym.jrugotom5.repository.AdvertRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
-import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
-import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +43,16 @@ public class AdvertService {
 
     public List<AdvertBasicInfoDTO> getAllAdverts() {
         return Streamable.of(advertRepository.findAll())
-                .map(advert->modelMapper.map(advert, AdvertBasicInfoDTO.class))
+                .map(advert -> modelMapper.map(advert, AdvertBasicInfoDTO.class))
+                .toList();
+    }
+
+    public List<AdvertInfoForCreatorDto> getAdvertsByUserId(Long id) {
+        if (id < 1) {
+            throw new InvalidUserIdException("User id " + id + " is invalid. Id must be greater than 0");
+        }
+        return advertRepository.getAdvertsByCreatedById(id).stream()
+                .map(advert -> modelMapper.map(advert, AdvertInfoForCreatorDto.class))
                 .toList();
     }
 }
