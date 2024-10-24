@@ -124,12 +124,11 @@ public class AdvertServiceTest {
     @Test
     void testGetAdvertsByCreateBy_InvalidUserId_ReturnsException() {
         Long invalidUserId = 0L;
-        AdvertService advertService = new AdvertService(advertRepository, modelMapper);
 
         InvalidUserIdException exception = assertThrows(InvalidUserIdException.class, () -> {
             advertService.getAdvertsByUserId(invalidUserId);
         });
 
-        assertEquals("User id must be greater than 0", exception.getMessage());
+        assertEquals("User id " + invalidUserId + " is invalid. Id must be greater than 0", exception.getMessage());
     }
 }
