@@ -49,7 +49,7 @@ public class AdvertService {
 
     public List<AdvertInfoForCreatorDto> getAdvertsByUserId(Long id) {
         if (id < 1) {
-            throw new InvalidUserIdException("User id must be greater than 0");
+            throw new InvalidUserIdException("User id " + id + " is invalid. Id must be greater than 0");
         }
         return advertRepository.getAdvertsByCreatedById(id).stream()
                 .map(advert -> modelMapper.map(advert, AdvertInfoForCreatorDto.class))

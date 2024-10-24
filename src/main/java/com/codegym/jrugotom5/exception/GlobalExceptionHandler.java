@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidUserIdException.class)
     public ResponseEntity<String> handleInvalidUserId(InvalidUserIdException ex) {
-        log.error("User id is less than 1");
+        log.error(ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
