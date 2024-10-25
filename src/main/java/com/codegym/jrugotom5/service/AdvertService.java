@@ -29,8 +29,7 @@ public class AdvertService {
         List<Advert> adverts = this.advertRepository.findAllByCreatedDateBetween(from, to);
 
         return adverts.stream()
-                .map(advert ->
-                {
+                .map(advert -> {
                     AdvertFullInfoDTO dto = modelMapper.map(advert, AdvertFullInfoDTO.class);
                     dto.setUserCreatorId(advert.getCreatedBy().getId());
                     return dto;

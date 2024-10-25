@@ -28,5 +28,10 @@
         <module name="MagicNumber">
             <property name="ignoreAnnotation" value="true"/>
         </module>
+        <module name="MethodName"/>
+        <module name="ParameterName"/>
+        <module name="LambdaParameterName"/>
+        <module name="RightCurly"/>
+        <module name="LeftCurly"/>
     </module>
 </module>
