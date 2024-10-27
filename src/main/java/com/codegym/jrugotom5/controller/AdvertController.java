@@ -1,11 +1,9 @@
 package com.codegym.jrugotom5.controller;
 
 import com.codegym.jrugotom5.dto.AdvertDTO;
-import com.codegym.jrugotom5.dto.AdvertUpdateDTO;
 import com.codegym.jrugotom5.service.AdvertService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -22,10 +20,9 @@ public class AdvertController {
 
         return advertService.getAdvertsByDateRange(from, to);
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<AdvertUpdateDTO> update(@PathVariable Long id, @RequestBody @Validated AdvertUpdateDTO advertUpdateDTO) {
-        AdvertUpdateDTO updatedAdvert = advertService.update(id, advertUpdateDTO);
-        return ResponseEntity.ok(updatedAdvert);
+    @PutMapping(value = "/api/advert")
+    public AdvertDTO update( @Valid @RequestBody AdvertDTO advertDTO) {
+        return advertService.update(advertDTO);
     }
 }
 

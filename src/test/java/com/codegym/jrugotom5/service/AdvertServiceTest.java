@@ -1,8 +1,8 @@
 package com.codegym.jrugotom5.service;
 
 import com.codegym.jrugotom5.dto.AdvertDTO;
-import com.codegym.jrugotom5.dto.AdvertUpdateDTO;
 import com.codegym.jrugotom5.entity.Advert;
+import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.InvalidIdException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -87,58 +86,70 @@ class AdvertServiceTest {
     }
 
     @Test
-    void testSuccessfulUpdate() {
+    public void testUpdateShouldUpdateAdvertWhenAdvertAndUserExist() {
 
-        Long advertId = 1L;
-        AdvertUpdateDTO advertDTO = new AdvertUpdateDTO();
-        advertDTO.setTitle("Updated Title");
-        advertDTO.setDescription("Updated Description");
+        AdvertDTO advertDTO = new AdvertDTO();
+        advertDTO.setId(1L);
+        advertDTO.setUserId(1L);
 
-        Advert existingAdvert = new Advert();
-        existingAdvert.setId(advertId);
-        existingAdvert.setTitle("Old Title");
-        existingAdvert.setDescription("Old Description");
+        Advert advert = new Advert();
+        advert.setId(1L);
 
-        Advert savedAdvert = new Advert();
-        savedAdvert.setId(advertId);
-        savedAdvert.setTitle("Updated Title");
-        savedAdvert.setDescription("Updated Description");
+        User user = new User();
+        user.setId(1L);
 
-        AdvertUpdateDTO mappedAdvertDTO = new AdvertUpdateDTO();
-        mappedAdvertDTO.setTitle("Updated Title");
-        mappedAdvertDTO.setDescription("Updated Description");
+        when(advertRepository.findById(1L)).thenReturn(Optional.of(advert));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(advertRepository.save(any(Advert.class))).thenReturn(advert);
+        when(modelMapper.map(any(AdvertDTO.class), eq(Advert.class))).thenReturn(advert);
+        when(modelMapper.map(any(Advert.class), eq(AdvertDTO.class))).thenReturn(advertDTO);
 
 
-        when(advertRepository.findById(advertId)).thenReturn(Optional.of(existingAdvert));
-        when(advertRepository.save(existingAdvert)).thenReturn(savedAdvert);
-        when(modelMapper.map(savedAdvert, AdvertUpdateDTO.class)).thenReturn(mappedAdvertDTO);
+        AdvertDTO updatedAdvertDTO = advertService.update(advertDTO);
 
 
-        AdvertUpdateDTO result = advertService.update(advertId, advertDTO);
-
-
-        assertNotNull(result);
-        assertEquals("Updated Title", result.getTitle());
-        assertEquals("Updated Description", result.getDescription());
-
-
-        verify(advertRepository, times(1)).findById(advertId);
-        verify(advertRepository, times(1)).save(existingAdvert);
+        assertNotNull(updatedAdvertDTO);
+        assertEquals(1L, updatedAdvertDTO.getId());
+        verify(advertRepository).findById(1L);
+        verify(userRepository).findById(1L);
+        verify(advertRepository).save(any(Advert.class));
     }
 
     @Test
-    void testAdvertNotFound() {
+    public void testUpdateShouldThrowExceptionWhenAdvertDoesNotExist() {
 
-        Long advertId = 1L;
-        AdvertUpdateDTO advertDTO = new AdvertUpdateDTO();
-        advertDTO.setTitle("Updated Title");
-        advertDTO.setDescription("Updated Description");
+        AdvertDTO advertDTO = new AdvertDTO();
+        advertDTO.setId(1L);
+        advertDTO.setUserId(1L);
 
-        when(advertRepository.findById(advertId)).thenReturn(Optional.empty());
+        when(advertRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(InvalidIdException.class, () -> advertService.update(advertId, advertDTO));
 
+        assertThrows(InvalidIdException.class, () -> advertService.update(advertDTO));
+        verify(advertRepository).findById(1L);
+        verify(userRepository, never()).findById(anyLong());
         verify(advertRepository, never()).save(any(Advert.class));
     }
+
+    @Test
+    public void testUpdateShouldThrowExceptionWhenUserDoesNotExist() {
+
+        AdvertDTO advertDTO = new AdvertDTO();
+        advertDTO.setId(1L);
+        advertDTO.setUserId(1L);
+
+        Advert advert = new Advert();
+        advert.setId(1L);
+
+        when(advertRepository.findById(1L)).thenReturn(Optional.of(advert));
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+
+        assertThrows(InvalidIdException.class, () -> advertService.update(advertDTO));
+        verify(advertRepository).findById(1L);
+        verify(userRepository).findById(1L);
+        verify(advertRepository, never()).save(any(Advert.class));
+    }
+
 
 }
