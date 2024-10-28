@@ -27,4 +27,9 @@ public class AdvertController {
     public List<AdvertFullInfoDTO> getAdverts(@RequestParam LocalDate from, LocalDate to) {
         return advertService.getAdvertsByDateRange(from, to);
     }
+
+    @GetMapping("/adverts")
+    public List<AdvertBasicInfoDTO> getByTitleContains(@RequestParam(value = "title") String phrase) {
+        return advertService.getByTitleContains(phrase);
+    }
 }
