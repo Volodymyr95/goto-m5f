@@ -18,6 +18,7 @@ import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -128,6 +129,17 @@ class AdvertServiceTest {
         verify(modelMapper, times(2)).map(any(Advert.class), eq(AdvertBasicInfoDTO.class));
     }
 
+    @Test
+    void getByTitleContains_ShouldReturnEmptyList_WhenNoAdvertsFound() {
+        String phrase = "NonExistingTitle";
+        when(advertRepository.findAllByTitleContainsIgnoreCase(phrase)).thenReturn(Collections.emptyList());
+
+        List<AdvertBasicInfoDTO> result = advertService.getByTitleContains(phrase);
+
+        assertTrue(result.isEmpty());
+        verify(advertRepository).findAllByTitleContainsIgnoreCase(phrase);
+        verify(modelMapper, never()).map(any(Advert.class), any(Class.class));
+    }
 
     @Test
     void createAdvert_userExists_advertCreatedSuccessfully() {
