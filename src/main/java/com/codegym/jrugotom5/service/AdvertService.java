@@ -56,14 +56,20 @@ public class AdvertService {
     public AdvertFullInfoDTO createAdvert(AdvertCreateDTO advertCreateDTO) {
         Long id = advertCreateDTO.getUserCreatorId();
         if (!userService.userExistsById(id)) {
-            log.error("Could not find User with id {}", id);
             throw new UserNotFoundException("User with id " + id + " does not exist.");
         }
-        Advert advertEntity = modelMapper.map(advertCreateDTO, Advert.class);
+        Advert advertEntity = new Advert();
+        advertEntity.setTitle(advertCreateDTO.getTitle());
+        advertEntity.setDescription(advertCreateDTO.getDescription());
         advertEntity.setCreatedDate(LocalDate.now());
         advertEntity.setEndDate(LocalDate.now().plusDays(DAYS_TO_END));
+        advertEntity.setIsActive(true);
+
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found."));
         advertEntity.setCreatedBy(user);
-        return modelMapper.map(advertRepository.save(advertEntity), AdvertFullInfoDTO.class);
+
+        AdvertFullInfoDTO advertFullInfoDTO = modelMapper.map(advertRepository.save(advertEntity), AdvertFullInfoDTO.class);
+        advertFullInfoDTO.setUserCreatorId(id);
+        return advertFullInfoDTO;
     }
 }

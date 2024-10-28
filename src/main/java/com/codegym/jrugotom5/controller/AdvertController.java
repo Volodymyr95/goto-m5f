@@ -7,7 +7,6 @@ import com.codegym.jrugotom5.service.AdvertService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -31,8 +30,8 @@ public class AdvertController {
     }
 
     @PostMapping
-    public ResponseEntity<AdvertFullInfoDTO> createAdvert(@RequestBody @Valid AdvertCreateDTO advertCreateDTO) {
-        AdvertFullInfoDTO advertFullInfoDTO = advertService.createAdvert(advertCreateDTO);
-        return new ResponseEntity<>(advertFullInfoDTO, HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public AdvertFullInfoDTO createAdvert(@RequestBody @Valid AdvertCreateDTO advertCreateDTO) {
+        return advertService.createAdvert(advertCreateDTO);
     }
 }

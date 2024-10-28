@@ -118,16 +118,37 @@ class AdvertServiceTest {
         advertCreateDTO.setDescription("Test Description");
         advertCreateDTO.setUserCreatorId(1L);
 
-        when(userService.userExistsById(1L)).thenReturn(true);
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(new User()));
+        User user = new User();
+        user.setId(1L);
 
         Advert advertEntity = new Advert();
-        when(modelMapper.map(advertCreateDTO, Advert.class)).thenReturn(advertEntity);
+        advertEntity.setTitle(advertCreateDTO.getTitle());
+        advertEntity.setDescription(advertCreateDTO.getDescription());
+        advertEntity.setCreatedDate(LocalDate.now());
+        advertEntity.setEndDate(LocalDate.now().plusDays(30));
+        advertEntity.setIsActive(true);
+        advertEntity.setCreatedBy(user);
 
-        advertService.createAdvert(advertCreateDTO);
+        Advert advert = new Advert();
+        advert.setId(1L);
 
+        AdvertFullInfoDTO advertFullInfoDTO = new AdvertFullInfoDTO();
+        advertFullInfoDTO.setUserCreatorId(1L);
+
+        when(userService.userExistsById(1L)).thenReturn(true);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(advertRepository.save(any(Advert.class))).thenReturn(advert);
+        when(modelMapper.map(advert, AdvertFullInfoDTO.class)).thenReturn(advertFullInfoDTO);
+
+        AdvertFullInfoDTO result = advertService.createAdvert(advertCreateDTO);
+
+        verify(userService).userExistsById(1L);
+        verify(userRepository).findById(1L);
         verify(advertRepository).save(any(Advert.class));
+        verify(modelMapper).map(advert, AdvertFullInfoDTO.class);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getUserCreatorId());
     }
 
     @Test
@@ -143,5 +164,4 @@ class AdvertServiceTest {
 
         verify(advertRepository, never()).save(any(Advert.class));
     }
-
 }
