@@ -142,6 +142,18 @@ class AdvertServiceTest {
     }
 
     @Test
+    void getByTitleContains_ShouldReturnEmptyList_WhenPhraseIsEmpty() {
+        String phrase = "";
+        when(advertRepository.findAllByTitleContainsIgnoreCase(phrase)).thenReturn(Collections.emptyList());
+
+        List<AdvertBasicInfoDTO> result = advertService.getByTitleContains(phrase);
+
+        assertTrue(result.isEmpty());
+        verify(advertRepository).findAllByTitleContainsIgnoreCase(phrase);
+        verify(modelMapper, never()).map(any(Advert.class), any(Class.class));
+    }
+
+    @Test
     void createAdvert_userExists_advertCreatedSuccessfully() {
         AdvertCreateDTO advertCreateDTO = new AdvertCreateDTO();
         advertCreateDTO.setTitle("Test Title");
