@@ -3,6 +3,7 @@ package com.codegym.jrugotom5.service;
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.entity.Advert;
+import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,5 +95,28 @@ public class AdvertServiceTest {
         });
 
         assertEquals("'From' date should be after 'To' date.", exception.getMessage());
+    }
+
+    @Test
+    void testGetAdvertById() {
+        long id = 1;
+        String title = "Test Advert 1";
+
+        Advert advert = new Advert();
+        advert.setId(id);
+        advert.setTitle(title);
+        advert.setCreatedBy(new User());
+
+        when(advertRepository.findAdvertById(id)).thenReturn(advert);
+
+        AdvertFullInfoDTO expectedAdvert = new AdvertFullInfoDTO();
+        expectedAdvert.setId(id);
+        expectedAdvert.setTitle(title);
+
+        when(modelMapper.map(advert, AdvertFullInfoDTO.class)).thenReturn(expectedAdvert);
+
+        AdvertFullInfoDTO actualAdvert = advertService.getAdvertById(id);
+
+        assertEquals(expectedAdvert, actualAdvert);
     }
 }
