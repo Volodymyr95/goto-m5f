@@ -14,13 +14,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class UserServiceTest {
+class UserServiceTest {
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private ModelMapper modelMapper;
-
     private UserService userService;
 
     @BeforeEach
