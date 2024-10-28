@@ -52,6 +52,13 @@ public class AdvertService {
                 .toList();
     }
 
+    public List<AdvertBasicInfoDTO> getByTitleContains(String phrase) {
+        return advertRepository.findAllByTitleContainsIgnoreCase(phrase)
+                .stream()
+                .map(advert -> modelMapper.map(advert, AdvertBasicInfoDTO.class))
+                .toList();
+    }
+
     @Transactional
     public AdvertFullInfoDTO createAdvert(AdvertCreateDTO advertCreateDTO) {
         Long id = advertCreateDTO.getUserCreatorId();

@@ -29,6 +29,11 @@ public class AdvertController {
         return advertService.getAdvertsByDateRange(from, to);
     }
 
+    @GetMapping("/adverts")
+    public List<AdvertBasicInfoDTO> getByTitleContains(@RequestParam(value = "title") String phrase) {
+        return advertService.getByTitleContains(phrase);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AdvertFullInfoDTO createAdvert(@RequestBody @Valid AdvertCreateDTO advertCreateDTO) {
