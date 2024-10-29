@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,11 +73,19 @@ public class AdvertService {
         advertEntity.setEndDate(LocalDate.now().plusDays(DAYS_TO_END));
         advertEntity.setIsActive(true);
 
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found."));
+        User user = findUserByIdOrThrow(id);
         advertEntity.setCreatedBy(user);
 
         AdvertFullInfoDTO advertFullInfoDTO = modelMapper.map(advertRepository.save(advertEntity), AdvertFullInfoDTO.class);
         advertFullInfoDTO.setUserCreatorId(id);
         return advertFullInfoDTO;
+    }
+
+    public User findUserByIdOrThrow(Long id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User with id " + id + " not found.");
+        }
+        return userOptional.get();
     }
 }
