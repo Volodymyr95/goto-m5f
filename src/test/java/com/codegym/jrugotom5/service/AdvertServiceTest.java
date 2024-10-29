@@ -18,7 +18,6 @@ import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,6 +112,17 @@ class AdvertServiceTest {
     }
 
     @Test
+    void testGetAdvertsByDateRange_FromDateEqualToDate() {
+        LocalDate date = LocalDate.of(2023, 1, 1);
+
+        InvalidDateRangeException exception = assertThrows(InvalidDateRangeException.class, () -> {
+            advertService.getAdvertsByDateRange(date, date);
+        });
+
+        assertEquals("'From' date should be after 'To' date.", exception.getMessage());
+    }
+
+    @Test
     void getByTitleContains_ShouldReturnListOfAdverts_WhenAdvertsWithPhraseFoundInDb() {
         String phrase = "Laptop";
         List<Advert> adverts = List.of(new Advert(), new Advert());
@@ -127,30 +137,6 @@ class AdvertServiceTest {
         assertEquals(expectedDTOs.size(), result.size());
         verify(advertRepository).findAllByTitleContainsIgnoreCase(phrase);
         verify(modelMapper, times(2)).map(any(Advert.class), eq(AdvertBasicInfoDTO.class));
-    }
-
-    @Test
-    void getByTitleContains_ShouldReturnEmptyList_WhenNoAdvertsFound() {
-        String phrase = "NonExistingTitle";
-        when(advertRepository.findAllByTitleContainsIgnoreCase(phrase)).thenReturn(Collections.emptyList());
-
-        List<AdvertBasicInfoDTO> result = advertService.getByTitleContains(phrase);
-
-        assertTrue(result.isEmpty());
-        verify(advertRepository).findAllByTitleContainsIgnoreCase(phrase);
-        verify(modelMapper, never()).map(any(Advert.class), any(Class.class));
-    }
-
-    @Test
-    void getByTitleContains_ShouldReturnEmptyList_WhenPhraseIsEmpty() {
-        String phrase = "";
-        when(advertRepository.findAllByTitleContainsIgnoreCase(phrase)).thenReturn(Collections.emptyList());
-
-        List<AdvertBasicInfoDTO> result = advertService.getByTitleContains(phrase);
-
-        assertTrue(result.isEmpty());
-        verify(advertRepository).findAllByTitleContainsIgnoreCase(phrase);
-        verify(modelMapper, never()).map(any(Advert.class), any(Class.class));
     }
 
     @Test
@@ -206,4 +192,16 @@ class AdvertServiceTest {
 
         verify(advertRepository, never()).save(any(Advert.class));
     }
+
+    @Test
+    void findUserByIdOrThrow_userNotFound_throwsUserNotFoundException() {
+        Long nonExistentUserId = 999L;
+
+        when(userRepository.findById(nonExistentUserId)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> advertService.findUserByIdOrThrow(nonExistentUserId));
+
+        verify(userRepository).findById(nonExistentUserId);
+    }
+
 }

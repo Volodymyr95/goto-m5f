@@ -11,7 +11,7 @@ import org.modelmapper.ModelMapper;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class UserServiceTest {
@@ -28,7 +28,7 @@ class UserServiceTest {
     }
 
     @Test
-    public void testGetAll_OneUser() {
+    void testGetAll_OneUser() {
         UserBasicInfoDTO expectedDto = new UserBasicInfoDTO();
         expectedDto.setId(1L);
         expectedDto.setFirstName("John");
@@ -42,5 +42,27 @@ class UserServiceTest {
         assertEquals(List.of(expectedDto), dtoListFromService);
 
         verify(userRepository).findAll();
+    }
+
+    @Test
+    void userExistsById_ShouldReturnTrue_WhenUserExists() {
+        Long userId = 1L;
+        when(userRepository.existsById(userId)).thenReturn(true);
+
+        boolean result = userService.userExistsById(userId);
+
+        assertTrue(result);
+        verify(userRepository).existsById(userId);
+    }
+
+    @Test
+    void userExistsById_ShouldReturnFalse_WhenUserDoesNotExist() {
+        Long userId = 1L;
+        when(userRepository.existsById(userId)).thenReturn(false);
+
+        boolean result = userService.userExistsById(userId);
+
+        assertFalse(result);
+        verify(userRepository).existsById(userId);
     }
 }
