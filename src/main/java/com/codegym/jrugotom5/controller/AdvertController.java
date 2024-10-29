@@ -32,4 +32,9 @@ public class AdvertController {
     public List<AdvertInfoForCreatorDto> getAdvertsByUser(@RequestParam Long userId) {
         return advertService.getAdvertsByUserId(userId);
     }
+
+    @GetMapping("/adverts")
+    public List<AdvertBasicInfoDTO> getByTitleContains(@RequestParam(value = "title") String phrase) {
+        return advertService.getByTitleContains(phrase);
+    }
 }
