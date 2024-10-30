@@ -25,15 +25,13 @@ public class AdvertService {
     private final ModelMapper modelMapper;
 
     public List<AdvertFullInfoDTO> getAdvertsByDateRange(LocalDate from, LocalDate to) {
-
         if (from.isAfter(to) || from.isEqual(to)) {
             throw new InvalidDateRangeException("'From' date should be after 'To' date.");
         }
         List<Advert> adverts = this.advertRepository.findAllByCreatedDateBetween(from, to);
 
         return adverts.stream()
-                .map(advert ->
-                {
+                .map(advert -> {
                     AdvertFullInfoDTO dto = modelMapper.map(advert, AdvertFullInfoDTO.class);
                     dto.setUserCreatorId(advert.getCreatedBy().getId());
                     return dto;
@@ -43,7 +41,14 @@ public class AdvertService {
 
     public List<AdvertBasicInfoDTO> getAllAdverts() {
         return Streamable.of(advertRepository.findAll())
-                .map(advert->modelMapper.map(advert, AdvertBasicInfoDTO.class))
+                .map(advert -> modelMapper.map(advert, AdvertBasicInfoDTO.class))
+                .toList();
+    }
+
+    public List<AdvertBasicInfoDTO> getByTitleContains(String phrase) {
+        return advertRepository.findAllByTitleContainsIgnoreCase(phrase)
+                .stream()
+                .map(advert -> modelMapper.map(advert, AdvertBasicInfoDTO.class))
                 .toList();
     }
 
