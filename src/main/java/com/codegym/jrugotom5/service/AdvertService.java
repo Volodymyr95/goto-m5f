@@ -1,22 +1,21 @@
 package com.codegym.jrugotom5.service;
 
+import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.Category;
 import com.codegym.jrugotom5.exception.InvalidCategoryException;
-import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
+import com.codegym.jrugotom5.repository.AdvertRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
-import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
-import lombok.extern.slf4j.Slf4j;
-import com.codegym.jrugotom5.exception.InvalidUserIdException;
 
-import java.util.List;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,8 +57,9 @@ public class AdvertService {
         return advertRepository.getAdvertsByCreatedById(id).stream()
                 .map(advert -> modelMapper.map(advert, AdvertInfoForCreatorDto.class))
                 .toList();
-      
-    public List<AdvertBasicInfoDTO> getByCategory(String category) {
+    }
+
+    public List<AdvertBasicInfoDTO> getByCategory (String category){
         try {
             Category enumCategory = Category.valueOf(category.toUpperCase());
             return advertRepository.findAllByCategory(enumCategory)
