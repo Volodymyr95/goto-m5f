@@ -1,5 +1,6 @@
 package com.codegym.jrugotom5.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -16,7 +17,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidUserIdException.class)
     public ResponseEntity<String> handleInvalidUserId(InvalidUserIdException ex) {
-        log.error(ex.getMessage());
+        log.error("An error occurred: ", ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

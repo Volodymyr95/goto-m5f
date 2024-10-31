@@ -5,7 +5,6 @@ import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.User;
-import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.InvalidUserIdException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
@@ -121,7 +120,7 @@ public class AdvertServiceTest {
 
 
     @Test
-    void testGetAdvertsByCreateBy_WithAdverts_ReturnsDtoList() {
+    void testGetAdvertsByUserId_WithAdverts_ReturnsDtoList() {
         Long userId = 1L;
         Advert advert1 = new Advert();
         Advert advert2 = new Advert();
@@ -144,7 +143,7 @@ public class AdvertServiceTest {
     }
 
     @Test
-    void testGetAdvertsByCreateBy_InvalidUserId_ReturnsException() {
+    void testGetAdvertsByUserId_InvalidUserId_ReturnsException() {
         Long invalidUserId = 0L;
 
         InvalidUserIdException exception = assertThrows(InvalidUserIdException.class, () -> {
