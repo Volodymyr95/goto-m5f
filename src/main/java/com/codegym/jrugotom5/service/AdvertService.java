@@ -28,7 +28,7 @@ public class AdvertService {
         if (from.isAfter(to) || from.isEqual(to)) {
             throw new InvalidDateRangeException("'From' date should be after 'To' date.");
         }
-        List<Advert> adverts = this.advertRepository.findAllByCreatedDateBetween(from, to);
+        List<Advert> adverts = advertRepository.findAllByCreatedDateBetween(from, to);
 
         return adverts.stream()
                 .map(advert -> {
