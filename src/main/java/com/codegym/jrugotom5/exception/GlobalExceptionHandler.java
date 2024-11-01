@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidDateRangeException.class)
     public ResponseEntity<String> handleInvalidDateRange(InvalidDateRangeException ex) {
+        log.error("Occurred Exception: {} ", ex.getMessage(), ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
