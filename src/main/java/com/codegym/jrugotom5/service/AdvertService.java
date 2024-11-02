@@ -56,7 +56,7 @@ public class AdvertService {
     }
 
     public List<AdvertInfoForCreatorDto> getAdvertsByUserId(Long id) {
-        if(userService.getAllUsers().stream().noneMatch(user -> user.getId().equals(id))){
+        if (userService.getAllUsers().stream().noneMatch(user -> user.getId().equals(id))) {
             throw new InvalidUserIdException("There is no user with this id %d".formatted(id));
         }
         return advertRepository.getAdvertsByCreatedById(id).stream()
@@ -64,7 +64,7 @@ public class AdvertService {
                 .toList();
     }
 
-    public List<AdvertBasicInfoDTO> getByCategory (String category){
+    public List<AdvertBasicInfoDTO> getByCategory(String category) {
         try {
             Category enumCategory = Category.valueOf(category.toUpperCase());
             return advertRepository.findAllByCategory(enumCategory)

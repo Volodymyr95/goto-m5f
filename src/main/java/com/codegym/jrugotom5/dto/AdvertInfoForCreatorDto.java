@@ -2,7 +2,6 @@ package com.codegym.jrugotom5.dto;
 
 import lombok.Data;
 
-import jakarta.validation.constraints.Min;
 import java.time.LocalDate;
 
 @Data
