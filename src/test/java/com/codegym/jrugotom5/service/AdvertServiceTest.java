@@ -226,16 +226,4 @@ class AdvertServiceTest {
 
         verify(advertRepository, never()).save(any(Advert.class));
     }
-
-    @Test
-    void findUserByIdOrThrow_userNotFound_throwsUserNotFoundException() {
-        Long nonExistentUserId = 999L;
-
-        when(userRepository.findById(nonExistentUserId)).thenReturn(Optional.empty());
-
-        assertThrows(UserNotFoundException.class, () -> advertService.findUserByIdOrThrow(nonExistentUserId));
-
-        verify(userRepository).findById(nonExistentUserId);
-    }
-
 }

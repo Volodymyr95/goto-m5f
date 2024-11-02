@@ -1,5 +1,6 @@
 package com.codegym.jrugotom5.dto;
 
+import com.codegym.jrugotom5.entity.Category;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -19,4 +20,7 @@ public class AdvertCreateDTO {
 
     @NotNull
     private Long userCreatorId;
+
+    @NotNull(message = "Category is required")
+    private Category category;
 }

@@ -4,11 +4,11 @@ import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertCreateDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.entity.Advert;
+import com.codegym.jrugotom5.entity.Category;
 import com.codegym.jrugotom5.entity.User;
+import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.UserNotFoundException;
-import com.codegym.jrugotom5.entity.Category;
-import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +18,8 @@ import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,20 +86,14 @@ public class AdvertService {
         advertEntity.setCreatedDate(LocalDate.now());
         advertEntity.setEndDate(LocalDate.now().plusDays(DAYS_TO_END));
         advertEntity.setIsActive(true);
+        advertEntity.setCategory(advertCreateDTO.getCategory());
 
-        User user = findUserByIdOrThrow(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id " + id + " does not exist."));
         advertEntity.setCreatedBy(user);
 
         AdvertFullInfoDTO advertFullInfoDTO = modelMapper.map(advertRepository.save(advertEntity), AdvertFullInfoDTO.class);
         advertFullInfoDTO.setUserCreatorId(id);
         return advertFullInfoDTO;
-    }
-
-    public User findUserByIdOrThrow(Long id) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User with id " + id + " not found.");
-        }
-        return userOptional.get();
     }
 }
