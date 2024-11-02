@@ -13,6 +13,4 @@ public interface AdvertRepository extends CrudRepository<Advert, Long> {
     List<Advert> findAllByTitleContainsIgnoreCase(String phrase);
 
     List<Advert> findAllByCategory(Category category);
-
-    Advert findAdvertById(Long id);
 }
