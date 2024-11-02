@@ -5,7 +5,6 @@ import com.codegym.jrugotom5.service.AdvertService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -20,8 +19,9 @@ public class AdvertController {
 
         return advertService.getAdvertsByDateRange(from, to);
     }
-    @PutMapping(value = "/api/advert")
+    @PutMapping(value = "/api/advert/")
     public AdvertDTO update( @Valid @RequestBody AdvertDTO advertDTO) {
+
         return advertService.update(advertDTO);
     }
 }

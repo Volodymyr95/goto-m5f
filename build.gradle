@@ -42,7 +42,7 @@ dependencies {
 dependencies {
     implementation 'org.hibernate.validator:hibernate-validator:6.2.5.Final'
     implementation 'javax.validation:validation-api:2.0.1.Final'
-    testImplementation 'junit:junit:4.13.2'
+
 }
 
 
