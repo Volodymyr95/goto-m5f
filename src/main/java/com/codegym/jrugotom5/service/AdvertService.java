@@ -7,6 +7,8 @@ import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.UserNotFoundException;
+import com.codegym.jrugotom5.entity.Category;
+import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +38,7 @@ public class AdvertService {
         if (from.isAfter(to) || from.isEqual(to)) {
             throw new InvalidDateRangeException("'From' date should be after 'To' date.");
         }
-        List<Advert> adverts = this.advertRepository.findAllByCreatedDateBetween(from, to);
+        List<Advert> adverts = advertRepository.findAllByCreatedDateBetween(from, to);
 
         return adverts.stream()
                 .map(advert -> {
@@ -58,6 +60,19 @@ public class AdvertService {
                 .stream()
                 .map(advert -> modelMapper.map(advert, AdvertBasicInfoDTO.class))
                 .toList();
+    }
+
+    public List<AdvertBasicInfoDTO> getByCategory(String category) {
+        try {
+            Category enumCategory = Category.valueOf(category.toUpperCase());
+            return advertRepository.findAllByCategory(enumCategory)
+                    .stream()
+                    .map(advert -> modelMapper.map(advert, AdvertBasicInfoDTO.class))
+                    .toList();
+        } catch (IllegalArgumentException e) {
+            throw new InvalidCategoryException("Invalid category: %s".formatted(category));
+        }
+
     }
 
     @Transactional
