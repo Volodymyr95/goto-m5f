@@ -5,7 +5,6 @@ import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
@@ -18,10 +17,8 @@ import static org.mockito.Mockito.*;
 public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private ModelMapper modelMapper;
-
     private UserService userService;
 
     @BeforeEach

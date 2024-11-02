@@ -4,6 +4,8 @@ import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.User;
+import com.codegym.jrugotom5.entity.Category;
+import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,10 +24,8 @@ import static org.mockito.Mockito.*;
 public class AdvertServiceTest {
     @Mock
     private AdvertRepository advertRepository;
-
     @Mock
     private ModelMapper modelMapper;
-
     private AdvertService advertService;
 
     @BeforeEach
@@ -67,16 +67,18 @@ public class AdvertServiceTest {
             String advertTitle = "Advert " + i;
 
             Advert advert = new Advert();
-            advert.setId((long) i);
+            User user = new User();
+            user.setId((long) i);
             advert.setTitle(advertTitle);
+            advert.setCreatedBy(user);
             adverts.add(advert);
 
-            AdvertFullInfoDTO advertFullInfoDTO = new AdvertFullInfoDTO();
-            advertFullInfoDTO.setId((long) i);
-            advertFullInfoDTO.setTitle(advertTitle);
-            expectedDtoList.add(advertFullInfoDTO);
+            AdvertFullInfoDTO advertDTO = new AdvertFullInfoDTO();
+            advertDTO.setId((long) i);
+            advertDTO.setTitle(advertTitle);
+            expectedDtoList.add(advertDTO);
 
-            when(modelMapper.map(advert, AdvertFullInfoDTO.class)).thenReturn(advertFullInfoDTO);
+            when(modelMapper.map(advert, AdvertFullInfoDTO.class)).thenReturn(advertDTO);
         }
         List<AdvertFullInfoDTO> dtoListFromService = advertService.getAdvertsByDateRange(from, to);
         verify(advertRepository).findAllByCreatedDateBetween(from, to);
@@ -95,6 +97,55 @@ public class AdvertServiceTest {
         });
 
         assertEquals("'From' date should be after 'To' date.", exception.getMessage());
+    }
+
+    @Test
+    void getByTitleContains_ShouldReturnListOfAdverts_WhenAdvertsWithPhraseFoundInDb() {
+        String phrase = "Laptop";
+        List<Advert> adverts = List.of(new Advert(), new Advert());
+        List<AdvertBasicInfoDTO> expectedDTOs = List.of(new AdvertBasicInfoDTO(), new AdvertBasicInfoDTO());
+
+        when(advertRepository.findAllByTitleContainsIgnoreCase(phrase)).thenReturn(adverts);
+        when(modelMapper.map(any(Advert.class), eq(AdvertBasicInfoDTO.class)))
+                .thenReturn(new AdvertBasicInfoDTO());
+
+        List<AdvertBasicInfoDTO> result = advertService.getByTitleContains(phrase);
+
+        assertEquals(expectedDTOs.size(), result.size());
+        verify(advertRepository).findAllByTitleContainsIgnoreCase(phrase);
+        verify(modelMapper, times(2)).map(any(Advert.class), eq(AdvertBasicInfoDTO.class));
+    }
+
+
+    @Test
+    void getByCategory_ShouldReturnListOfAdverts_WhenCategoryExists() {
+        Category category = Category.ELECTRONICS;
+        List<Advert> adverts = List.of(new Advert(), new Advert());
+        List<AdvertBasicInfoDTO> expectedDTOs = List.of(new AdvertBasicInfoDTO(), new AdvertBasicInfoDTO());
+
+        when(advertRepository.findAllByCategory(category)).thenReturn(adverts);
+        when(modelMapper.map(any(Advert.class), eq(AdvertBasicInfoDTO.class)))
+                .thenReturn(new AdvertBasicInfoDTO());
+
+        List<AdvertBasicInfoDTO> result = advertService.getByCategory(category.toString().toLowerCase());
+
+        assertEquals(expectedDTOs, result);
+        verify(advertRepository).findAllByCategory(category);
+        verify(modelMapper, times(2)).map(any(Advert.class), eq(AdvertBasicInfoDTO.class));
+    }
+
+    @Test
+    void getByCategory_ShouldThrowInvalidCategoryException_WhenCategoryDoesNotExists() {
+        String category = "NonExistingCategory";
+
+        InvalidCategoryException exception = assertThrows(
+                InvalidCategoryException.class,
+                () -> advertService.getByCategory(category)
+        );
+
+        assertEquals("Invalid category: %s".formatted(category), exception.getMessage());
+        verify(advertRepository, never()).findAllByCategory(any(Category.class));
+        verify(modelMapper, never()).map(any(), eq(AdvertBasicInfoDTO.class));
     }
 
     @Test
