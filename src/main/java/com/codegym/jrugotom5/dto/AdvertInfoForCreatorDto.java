@@ -7,7 +7,6 @@ import java.time.LocalDate;
 
 @Data
 public class AdvertInfoForCreatorDto {
-    @Min(value = 1, message = "Id must be greater than or equals to 1")
     private Long id;
     private String title;
     private LocalDate createdDate;
