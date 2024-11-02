@@ -39,9 +39,8 @@ public class AdvertController {
     }
 
     @Operation(
-            summary = "Retrieve all adverts created by a specific user",
-            description = "Get a list of adverts created by a user by specifying the user's id.",
-            tags = {"adverts", "user", "get"}
+            summary = "Retrieve all adverts created by a specific user's id",
+            tags = {"adverts", "get"}
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = AdvertInfoForCreatorDto.class), mediaType = "application/json")}),
@@ -49,7 +48,7 @@ public class AdvertController {
             @ApiResponse(responseCode = "404", content = {@Content(schema = @Schema())}, description = "404 error occurs if there is no user with the specified id")
     })
     @GetMapping("/user")
-    public List<AdvertInfoForCreatorDto> getAdvertsByUser(@RequestParam(value = "id") @Min(value = 1, message = "Id must be greater than or equals to 1") Long userId) {
+    public List<AdvertInfoForCreatorDto> getAdvertsByUser(@RequestParam(value = "id") @Min(value = 1, message = "Id must be greater than 0") Long userId) {
         return advertService.getAdvertsByUserId(userId);
     }
 

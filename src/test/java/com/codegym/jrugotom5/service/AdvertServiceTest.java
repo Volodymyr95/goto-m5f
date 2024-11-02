@@ -3,7 +3,6 @@ package com.codegym.jrugotom5.service;
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
-import com.codegym.jrugotom5.dto.UserBasicInfoDTO;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.Category;
 import com.codegym.jrugotom5.entity.User;
@@ -11,6 +10,7 @@ import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.InvalidUserIdException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
+import com.codegym.jrugotom5.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -20,6 +20,7 @@ import org.modelmapper.ModelMapper;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,17 +30,18 @@ public class AdvertServiceTest {
     private AdvertRepository advertRepository;
 
     @Mock
+    private UserRepository userRepository;
+
+    @Mock
     private ModelMapper modelMapper;
 
     private AdvertService advertService;
 
-    @Mock
-    private UserService userService;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        advertService = new AdvertService(advertRepository, modelMapper, userService);
+        advertService = new AdvertService(advertRepository, modelMapper, userRepository);
     }
 
     @Test
@@ -128,10 +130,8 @@ public class AdvertServiceTest {
     @Test
     void testGetAdvertsByUserId_WithAdverts_ReturnsDtoList() {
         Long userId = 2L;
-        UserBasicInfoDTO userDto = new UserBasicInfoDTO();
-        userDto.setId(userId);
 
-        when(userService.getAllUsers()).thenReturn(List.of(userDto));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(new User()));
 
         Advert advert1 = new Advert();
         Advert advert2 = new Advert();
