@@ -4,10 +4,9 @@ import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
 import com.codegym.jrugotom5.entity.Advert;
-import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.entity.Category;
+import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.exception.InvalidCategoryException;
-import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.InvalidUserIdException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
@@ -33,10 +32,13 @@ public class AdvertServiceTest {
 
     private AdvertService advertService;
 
+    @Mock
+    private UserService userService;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        advertService = new AdvertService(advertRepository, modelMapper);
+        advertService = new AdvertService(advertRepository, modelMapper, userService);
     }
 
     @Test
@@ -147,13 +149,13 @@ public class AdvertServiceTest {
 
     @Test
     void testGetAdvertsByUserId_InvalidUserId_ReturnsException() {
-        Long invalidUserId = 0L;
+        Long invalidUserId = 99L;
 
         InvalidUserIdException exception = assertThrows(InvalidUserIdException.class, () -> {
             advertService.getAdvertsByUserId(invalidUserId);
         });
 
-        assertEquals("User id " + invalidUserId + " is invalid. Id must be greater than 0", exception.getMessage());
+        assertEquals("There is no user with this id %d".formatted(invalidUserId), exception.getMessage());
     }
 
     @Test
