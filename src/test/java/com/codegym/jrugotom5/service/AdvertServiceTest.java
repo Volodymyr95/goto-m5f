@@ -17,6 +17,7 @@ import org.modelmapper.ModelMapper;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -158,7 +159,7 @@ public class AdvertServiceTest {
         advert.setTitle(title);
         advert.setCreatedBy(new User());
 
-        when(advertRepository.findAdvertById(id)).thenReturn(advert);
+        when(advertRepository.findById(id)).thenReturn(Optional.of(advert));
 
         AdvertFullInfoDTO expectedAdvert = new AdvertFullInfoDTO();
         expectedAdvert.setId(id);
