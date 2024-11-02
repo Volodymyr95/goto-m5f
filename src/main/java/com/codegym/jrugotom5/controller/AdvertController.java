@@ -26,7 +26,7 @@ public class AdvertController {
     }
 
     @GetMapping(path = "/date")
-    public List<AdvertFullInfoDTO> getAdverts(@RequestParam LocalDate from, LocalDate to) {
+    public List<AdvertFullInfoDTO> getByDateRange(@RequestParam LocalDate from, LocalDate to) {
         return advertService.getAdvertsByDateRange(from, to);
         }
     @GetMapping("/user")
