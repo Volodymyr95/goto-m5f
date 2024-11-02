@@ -4,18 +4,18 @@ import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.Category;
+import com.codegym.jrugotom5.exception.EntityNotFoundException;
 import com.codegym.jrugotom5.exception.InvalidCategoryException;
-import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
+import com.codegym.jrugotom5.repository.AdvertRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
-import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
-import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,16 +67,8 @@ public class AdvertService {
     }
 
     public AdvertFullInfoDTO getAdvertById(Long id) {
-        if (id <= 0) {
-            log.error("Invalid advert id: {}", id);
-            throw new InvalidAdvertIdException("Advert id must be a positive number.");
-        }
-
-        Advert advert = advertRepository.findAdvertById(id);
-        if (advert == null) {
-            log.error("Advert with id {} not found.", id);
-            throw new EntityNotFoundException("Advert with id " + id + " not found.");
-        }
+        Advert advert = advertRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Advert with id " + id + " not found."));
 
         AdvertFullInfoDTO dto = modelMapper.map(advert, AdvertFullInfoDTO.class);
         dto.setUserCreatorId(advert.getCreatedBy().getId());
