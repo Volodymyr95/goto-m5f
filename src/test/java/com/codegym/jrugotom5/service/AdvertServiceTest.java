@@ -3,6 +3,7 @@ package com.codegym.jrugotom5.service;
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
+import com.codegym.jrugotom5.dto.UserBasicInfoDTO;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.Category;
 import com.codegym.jrugotom5.entity.User;
@@ -126,7 +127,12 @@ public class AdvertServiceTest {
 
     @Test
     void testGetAdvertsByUserId_WithAdverts_ReturnsDtoList() {
-        Long userId = 1L;
+        Long userId = 2L;
+        UserBasicInfoDTO userDto = new UserBasicInfoDTO();
+        userDto.setId(userId);
+
+        when(userService.getAllUsers()).thenReturn(List.of(userDto));
+
         Advert advert1 = new Advert();
         Advert advert2 = new Advert();
         List<Advert> adverts = List.of(advert1, advert2);
