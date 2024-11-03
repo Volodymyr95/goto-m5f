@@ -6,6 +6,11 @@ import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.service.AdvertService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -23,13 +28,19 @@ public class AdvertController {
     }
 
     @GetMapping(path = "/date")
-    public List<AdvertFullInfoDTO> getAdverts(@RequestParam LocalDate from, LocalDate to) {
+    public List<AdvertFullInfoDTO> getByDateRange(@RequestParam LocalDate from, LocalDate to) {
         return advertService.getAdvertsByDateRange(from, to);
     }
 
     @GetMapping("/adverts")
     public List<AdvertBasicInfoDTO> getByTitleContains(@RequestParam(value = "title") String phrase) {
         return advertService.getByTitleContains(phrase);
+    }
+
+    @GetMapping("/{category}/")
+    public List<AdvertBasicInfoDTO> getByCategory(@PathVariable String category) {
+        return advertService.getByCategory(category);
+
     }
 
     @DeleteMapping("/advert/{id}")
