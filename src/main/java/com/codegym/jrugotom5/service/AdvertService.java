@@ -30,7 +30,6 @@ public class AdvertService {
     private static final Integer DAYS_TO_END = 30;
     private final AdvertRepository advertRepository;
     private final ModelMapper modelMapper;
-    private final UserService userService;
     private final UserRepository userRepository;
 
     public List<AdvertFullInfoDTO> getAdvertsByDateRange(LocalDate from, LocalDate to) {
@@ -77,20 +76,18 @@ public class AdvertService {
     @Transactional
     public AdvertFullInfoDTO createAdvert(AdvertCreateDTO advertCreateDTO) {
         Long id = advertCreateDTO.getUserCreatorId();
-        if (!userService.userExistsById(id)) {
-            throw new UserNotFoundException("User with id " + id + " does not exist.");
-        }
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id " + id + " does not exist."));
+
         Advert advertEntity = new Advert();
+        advertEntity.setCreatedBy(user);
         advertEntity.setTitle(advertCreateDTO.getTitle());
         advertEntity.setDescription(advertCreateDTO.getDescription());
         advertEntity.setCreatedDate(LocalDate.now());
         advertEntity.setEndDate(LocalDate.now().plusDays(DAYS_TO_END));
         advertEntity.setIsActive(true);
         advertEntity.setCategory(advertCreateDTO.getCategory());
-
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User with id " + id + " does not exist."));
-        advertEntity.setCreatedBy(user);
 
         AdvertFullInfoDTO advertFullInfoDTO = modelMapper.map(advertRepository.save(advertEntity), AdvertFullInfoDTO.class);
         advertFullInfoDTO.setUserCreatorId(id);
