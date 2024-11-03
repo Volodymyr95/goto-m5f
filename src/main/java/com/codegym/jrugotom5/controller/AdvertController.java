@@ -2,12 +2,11 @@ package com.codegym.jrugotom5.controller;
 
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
+import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.service.AdvertService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,4 +31,28 @@ public class AdvertController {
     public List<AdvertBasicInfoDTO> getByTitleContains(@RequestParam(value = "title") String phrase) {
         return advertService.getByTitleContains(phrase);
     }
+
+    @DeleteMapping("/advert/{id}")
+    public void deleteAdvert(@PathVariable Long id) {
+        advertService.deleteAdvertById(id);
+    }
+
+    @Transactional
+    @DeleteMapping("/advert/title/{title}")
+    public void deleteAdvertByTtile(@PathVariable String title) {
+        advertService.deleteAdvertByTitle(title);
+    }
+
+    @Transactional
+    @DeleteMapping("/adverts/user/{userId}")
+    public void deleteAdvertsByUserId(@PathVariable Long userId) {
+        advertService.deleteAdvertsByUserId(userId);
+    }
+
+    @Transactional
+    @DeleteMapping("/adverts/deleteByDescription")
+    public void deleteAdvertsByDescription(@RequestParam String description) {
+        advertService.deleteAdvertsByDescriptionLike(description);
+    }
+
 }

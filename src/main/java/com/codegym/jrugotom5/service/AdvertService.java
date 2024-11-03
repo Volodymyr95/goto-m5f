@@ -4,6 +4,7 @@ import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.util.Streamable;
@@ -49,4 +50,38 @@ public class AdvertService {
                 .map(advert -> modelMapper.map(advert, AdvertBasicInfoDTO.class))
                 .toList();
     }
+
+    public void deleteAdvertById(Long id) {
+        if (!advertRepository.existsById(id)) {
+            log.error("Advert with ID {} not found", id);
+            throw new EntityNotFoundException("Advert with %d ID not found".formatted(id));
+        }
+        advertRepository.deleteById(id);
+    }
+
+    public void deleteAdvertByTitle(String title) {
+        if (!advertRepository.existsByTitle(title)) {
+            log.error("Advert with title {} not found", title);
+            throw new EntityNotFoundException("Advert with title %s not found".formatted(title));
+        }
+        advertRepository.deleteByTitle(title);
+    }
+
+    public void deleteAdvertsByUserId(Long userId) {
+        if (!advertRepository.existsByCreatedBy_Id(userId)) {
+            log.error("No adverts found for user with ID {}", userId);
+            throw new EntityNotFoundException("No adverts found for user with ID " + userId);
+        }
+        advertRepository.deleteByCreatedBy_Id(userId);
+    }
+
+    public void deleteAdvertsByDescriptionLike(String description) {
+        List<Advert> advertsToDelete = advertRepository.findByDescriptionContaining(description);
+        if (advertsToDelete.isEmpty()) {
+            log.error("No adverts found with description like {}", description);
+            throw new EntityNotFoundException("No adverts found with description like " + description);
+        }
+        advertRepository.deleteByDescriptionContaining(description);
+    }
+
 }

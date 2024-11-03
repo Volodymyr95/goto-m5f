@@ -6,6 +6,7 @@ import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -14,6 +15,7 @@ import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -114,4 +116,91 @@ public class AdvertServiceTest {
         verify(modelMapper, times(2)).map(any(Advert.class), eq(AdvertBasicInfoDTO.class));
     }
 
+    @Test
+    public void deleteAdvertById_ExistingId_ShouldDeleteAdvert() {
+        Long existingId = 1L;
+        when(advertRepository.existsById(existingId)).thenReturn(true);
+
+        advertService.deleteAdvertById(existingId);
+
+        verify(advertRepository).deleteById(existingId);
+    }
+
+    @Test
+    public void deleteAdvertById_NonExistingId_ShouldThrowException() {
+        Long nonExistingId = 1L;
+        when(advertRepository.existsById(nonExistingId)).thenReturn(false);
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+            advertService.deleteAdvertById(nonExistingId);
+        });
+        assertEquals("Advert with 1 ID not found", exception.getMessage());
+    }
+
+    @Test
+    public void deleteAdvertByTitle_ExistingTitle_ShouldDeleteAdvert() {
+        String existingTitle = "Sample Advert";
+        when(advertRepository.existsByTitle(existingTitle)).thenReturn(true);
+
+        advertService.deleteAdvertByTitle(existingTitle);
+
+        verify(advertRepository).deleteByTitle(existingTitle);
+    }
+
+    @Test
+    public void deleteAdvertByTitle_NonExistingTitle_ShouldThrowException() {
+        String nonExistingTitle = "Sample Advert";
+        when(advertRepository.existsByTitle(nonExistingTitle)).thenReturn(false);
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+            advertService.deleteAdvertByTitle(nonExistingTitle);
+        });
+        assertEquals("Advert with title Sample Advert not found", exception.getMessage());
+    }
+
+    @Test
+    public void deleteAdvertsByUserId_ExistingUserId_ShouldDeleteAdverts() {
+        Long existingUserId = 1L;
+        when(advertRepository.existsByCreatedBy_Id(existingUserId)).thenReturn(true);
+
+        advertService.deleteAdvertsByUserId(existingUserId);
+
+        verify(advertRepository).deleteByCreatedBy_Id(existingUserId);
+    }
+
+    @Test
+    public void deleteAdvertsByUserId_NonExistingUserId_ShouldThrowException() {
+        Long nonExistingUserId = 1L;
+        when(advertRepository.existsByCreatedBy_Id(nonExistingUserId)).thenReturn(false);
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+            advertService.deleteAdvertsByUserId(nonExistingUserId);
+        });
+        assertEquals("No adverts found for user with ID " + nonExistingUserId, exception.getMessage());
+    }
+
+    @Test
+    public void deleteAdvertsByDescriptionLike_ExistingDescription_ShouldDeleteAdverts() {
+        String description = "sample";
+        Advert advert = new Advert();
+        advert.setDescription("This is a sample advert.");
+        List<Advert> advertsToDelete = List.of(advert);
+
+        when(advertRepository.findByDescriptionContaining(description)).thenReturn(advertsToDelete);
+
+        advertService.deleteAdvertsByDescriptionLike(description);
+
+        verify(advertRepository).deleteByDescriptionContaining(description);
+    }
+
+    @Test
+    public void deleteAdvertsByDescriptionLike_NonExistingDescription_ShouldThrowException() {
+        String description = "non-existing";
+        when(advertRepository.findByDescriptionContaining(description)).thenReturn(Collections.emptyList());
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+            advertService.deleteAdvertsByDescriptionLike(description);
+        });
+        assertEquals("No adverts found with description like " + description, exception.getMessage());
+    }
 }
