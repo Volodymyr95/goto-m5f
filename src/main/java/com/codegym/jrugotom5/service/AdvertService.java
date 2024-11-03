@@ -9,9 +9,11 @@ import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.util.Streamable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.time.LocalDate;
@@ -63,5 +65,12 @@ public class AdvertService {
             throw new InvalidCategoryException("Invalid category: %s".formatted(category));
         }
 
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * *")
+    public void makeAdvertsInactive() {
+        advertRepository.deactivateExpiredAdverts();
+        log.info("Daily task \"makeAdvertsInactive\" has done.");
     }
 }
