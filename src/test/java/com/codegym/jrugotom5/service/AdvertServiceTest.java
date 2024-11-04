@@ -197,14 +197,12 @@ class AdvertServiceTest {
         AdvertFullInfoDTO advertFullInfoDTO = new AdvertFullInfoDTO();
         advertFullInfoDTO.setUserCreatorId(1L);
 
-        when(userService.userExistsById(1L)).thenReturn(true);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(advertRepository.save(any(Advert.class))).thenReturn(advert);
         when(modelMapper.map(advert, AdvertFullInfoDTO.class)).thenReturn(advertFullInfoDTO);
 
         AdvertFullInfoDTO result = advertService.createAdvert(advertCreateDTO);
 
-        verify(userService).userExistsById(1L);
         verify(userRepository).findById(1L);
         verify(advertRepository).save(any(Advert.class));
         verify(modelMapper).map(advert, AdvertFullInfoDTO.class);
