@@ -10,7 +10,9 @@ import java.util.List;
 public interface AdvertRepository extends CrudRepository<Advert, Long> {
 
     boolean existsByTitle(String title);
+
     boolean existsByCreatedById(Long userId);
+
     List<Advert> findByDescriptionContaining(String description);
 
     List<Advert> findAllByCreatedDateBetween(LocalDate from, LocalDate to);
