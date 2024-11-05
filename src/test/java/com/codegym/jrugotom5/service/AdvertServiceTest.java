@@ -148,4 +148,11 @@ public class AdvertServiceTest {
         verify(modelMapper, never()).map(any(), eq(AdvertBasicInfoDTO.class));
     }
 
+    @Test
+    void testDeactivateExpiredAdverts() {
+        advertService.deactivateExpiredAdverts();
+
+        verify(advertRepository).deactivateExpiredAdverts();
+    }
+
 }
