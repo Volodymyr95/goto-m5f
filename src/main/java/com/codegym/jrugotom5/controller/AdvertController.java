@@ -2,7 +2,6 @@ package com.codegym.jrugotom5.controller;
 
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
-import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.service.AdvertService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -48,20 +47,18 @@ public class AdvertController {
         advertService.deleteAdvertById(id);
     }
 
-    @Transactional
     @DeleteMapping("/advert/title/{title}")
     public void deleteAdvertByTtile(@PathVariable String title) {
         advertService.deleteAdvertByTitle(title);
     }
 
-    @Transactional
+
     @DeleteMapping("/adverts/user/{userId}")
     public void deleteAdvertsByUserId(@PathVariable Long userId) {
         advertService.deleteAdvertsByUserId(userId);
     }
 
-    @Transactional
-    @DeleteMapping("/adverts/deleteByDescription")
+    @DeleteMapping("/adverts/description")
     public void deleteAdvertsByDescription(@RequestParam String description) {
         advertService.deleteAdvertsByDescriptionLike(description);
     }

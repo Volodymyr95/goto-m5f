@@ -195,17 +195,17 @@ public class AdvertServiceTest {
     @Test
     public void deleteAdvertsByUserId_ExistingUserId_ShouldDeleteAdverts() {
         Long existingUserId = 1L;
-        when(advertRepository.existsByCreatedBy_Id(existingUserId)).thenReturn(true);
+        when(advertRepository.existsByCreatedById(existingUserId)).thenReturn(true);
 
         advertService.deleteAdvertsByUserId(existingUserId);
 
-        verify(advertRepository).deleteByCreatedBy_Id(existingUserId);
+        verify(advertRepository).deleteByCreatedById(existingUserId);
     }
 
     @Test
     public void deleteAdvertsByUserId_NonExistingUserId_ShouldThrowException() {
         Long nonExistingUserId = 1L;
-        when(advertRepository.existsByCreatedBy_Id(nonExistingUserId)).thenReturn(false);
+        when(advertRepository.existsByCreatedById(nonExistingUserId)).thenReturn(false);
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
             advertService.deleteAdvertsByUserId(nonExistingUserId);

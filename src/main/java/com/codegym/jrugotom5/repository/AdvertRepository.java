@@ -10,7 +10,7 @@ import java.util.List;
 public interface AdvertRepository extends CrudRepository<Advert, Long> {
 
     boolean existsByTitle(String title);
-    boolean existsByCreatedBy_Id(Long userId);
+    boolean existsByCreatedById(Long userId);
     List<Advert> findByDescriptionContaining(String description);
 
     List<Advert> findAllByCreatedDateBetween(LocalDate from, LocalDate to);
@@ -20,6 +20,9 @@ public interface AdvertRepository extends CrudRepository<Advert, Long> {
     List<Advert> findAllByCategory(Category category);
 
     void deleteByTitle(String title);
-    void deleteByCreatedBy_Id(Long userId);
+
+    void deleteByCreatedById(Long userId);
+
     void deleteByDescriptionContaining(String description);
+
 }

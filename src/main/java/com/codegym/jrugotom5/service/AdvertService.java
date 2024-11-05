@@ -7,6 +7,7 @@ import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.util.Streamable;
@@ -66,6 +67,7 @@ public class AdvertService {
 
     }
 
+    @Transactional
     public void deleteAdvertById(Long id) {
         if (!advertRepository.existsById(id)) {
             log.error("Advert with ID {} not found", id);
@@ -74,6 +76,7 @@ public class AdvertService {
         advertRepository.deleteById(id);
     }
 
+    @Transactional
     public void deleteAdvertByTitle(String title) {
         if (!advertRepository.existsByTitle(title)) {
             log.error("Advert with title {} not found", title);
@@ -82,14 +85,16 @@ public class AdvertService {
         advertRepository.deleteByTitle(title);
     }
 
+    @Transactional
     public void deleteAdvertsByUserId(Long userId) {
-        if (!advertRepository.existsByCreatedBy_Id(userId)) {
+        if (!advertRepository.existsByCreatedById(userId)) {
             log.error("No adverts found for user with ID {}", userId);
             throw new EntityNotFoundException("No adverts found for user with ID " + userId);
         }
-        advertRepository.deleteByCreatedBy_Id(userId);
+        advertRepository.deleteByCreatedById(userId);
     }
 
+    @Transactional
     public void deleteAdvertsByDescriptionLike(String description) {
         List<Advert> advertsToDelete = advertRepository.findByDescriptionContaining(description);
         if (advertsToDelete.isEmpty()) {

@@ -3,6 +3,7 @@ package com.codegym.jrugotom5.service;
 import com.codegym.jrugotom5.dto.UserBasicInfoDTO;
 import com.codegym.jrugotom5.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -24,6 +25,7 @@ public class UserService {
                 .toList();
     }
 
+    @Transactional
     public void deleteUserById(Long id) {
         if (!userRepository.existsById(id)) {
             log.error("User with ID {} not found", id);
@@ -32,6 +34,7 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    @Transactional
     public void deleteUserByEmail(String email) {
         if (!userRepository.existsByEmail(email)) {
             log.error("User with email {} not found", email);
@@ -40,6 +43,7 @@ public class UserService {
         userRepository.deleteByEmail(email);
     }
 
+    @Transactional
     public void deleteUserByName(String firstName, String lastName) {
         if (!userRepository.existsByFirstNameAndLastName(firstName, lastName)) {
             log.error("User with firstname {} and lastname {} not found", firstName, lastName);

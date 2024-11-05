@@ -26,13 +26,11 @@ public class UserController {
         userService.deleteUserById(id);
     }
 
-    @Transactional
     @DeleteMapping("/user/email/{email}")
     public void deleteUserByEmail(@PathVariable String email) {
         userService.deleteUserByEmail(email);
     }
 
-    @Transactional
     @DeleteMapping("/user/name")
     public void deleteUserByName(
             @RequestParam String firstName,
