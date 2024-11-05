@@ -1,6 +1,7 @@
 package com.codegym.jrugotom5.controller;
 
 import com.codegym.jrugotom5.entity.Advert;
+import com.codegym.jrugotom5.entity.Category;
 import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.repository.UserRepository;
@@ -88,6 +89,49 @@ public class AdvertControllerTest {
         mockMvc.perform(get("/api/adverts/date")
                         .param("from",from.toString())
                         .param("to",to.toString()))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @SneakyThrows
+    public void testGetAdvertsByTitlePhrase() {
+        Advert advert1 = new Advert();
+        advert1.setTitle("test");
+        Advert advert2 = new Advert();
+        advert2.setTitle("TeSt");
+        Advert advert3 = new Advert();
+        advert3.setTitle("another title");
+
+        List<Advert> adverts = List.of(advert1, advert2, advert3);
+        advertRepository.saveAll(adverts);
+
+        mockMvc.perform(get("/api/adverts/adverts").param("title","test"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    @SneakyThrows
+    public void testGetAdvertsByCategory() {
+        Advert advert1 = new Advert();
+        advert1.setCategory(Category.VEHICLES);
+        Advert advert2 = new Advert();
+        advert2.setCategory(Category.VEHICLES);
+        Advert advert3 = new Advert();
+        advert3.setCategory(Category.REAL_ESTATE);
+
+        List<Advert> adverts = List.of(advert1, advert2, advert3);
+        advertRepository.saveAll(adverts);
+
+        mockMvc.perform(get("/api/adverts/vehicles"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    @SneakyThrows
+    public void testGetAdvertsByCategoryInvalidCategory() {
+        mockMvc.perform(get("/api/adverts/bad_category"))
                 .andExpect(status().isBadRequest());
     }
 }
