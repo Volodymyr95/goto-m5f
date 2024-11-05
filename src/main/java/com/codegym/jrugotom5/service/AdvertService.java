@@ -9,7 +9,6 @@ import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.util.Streamable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -68,9 +67,7 @@ public class AdvertService {
     }
 
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *")
-    public void makeAdvertsInactive() {
+    public void deactivateExpiredAdverts() {
         advertRepository.deactivateExpiredAdverts();
-        log.info("Daily task \"makeAdvertsInactive\" has done.");
     }
 }
