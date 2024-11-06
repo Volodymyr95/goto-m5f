@@ -16,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -56,12 +57,15 @@ public class AdvertControllerTest {
         int numberOfAdverts = 3;
         User user = new User();
         userRepository.save(user);
+
+        List<Advert> adverts = new ArrayList<>();
         for (int i = 0; i < numberOfAdverts; i++) {
             Advert advert = new Advert();
             advert.setCreatedDate(LocalDate.of(2024, (i + 1) % 12, (i + 1) % 30));
             advert.setCreatedBy(user);
-            advertRepository.save(advert);
+            adverts.add(advert);
         }
+        advertRepository.saveAll(adverts);
 
         LocalDate from = LocalDate.of(2024, 1, 1);
         LocalDate to = LocalDate.of(2025, 1, 1);
