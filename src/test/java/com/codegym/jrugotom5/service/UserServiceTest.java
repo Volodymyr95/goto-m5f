@@ -4,7 +4,6 @@ import com.codegym.jrugotom5.dto.UserBasicInfoDTO;
 import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.exception.UserDeletionException;
 import com.codegym.jrugotom5.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

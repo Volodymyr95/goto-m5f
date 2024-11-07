@@ -9,7 +9,6 @@ import com.codegym.jrugotom5.exception.AdvertDeletionException;
 import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
