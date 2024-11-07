@@ -3,10 +3,10 @@ package com.codegym.jrugotom5.service;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.Category;
+import com.codegym.jrugotom5.exception.AdvertDeletionException;
 import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -71,7 +71,7 @@ public class AdvertService {
     public void deleteAdvertById(Long id) {
         if (!advertRepository.existsById(id)) {
             log.error("Advert with ID {} not found", id);
-            throw new EntityNotFoundException("Advert with %d ID not found".formatted(id));
+            throw new AdvertDeletionException("Advert with %d ID not found".formatted(id));
         }
         advertRepository.deleteById(id);
     }
@@ -80,7 +80,7 @@ public class AdvertService {
     public void deleteAdvertByTitle(String title) {
         if (!advertRepository.existsByTitle(title)) {
             log.error("Advert with title {} not found", title);
-            throw new EntityNotFoundException("Advert with title %s not found".formatted(title));
+            throw new AdvertDeletionException("Advert with title %s not found".formatted(title));
         }
         advertRepository.deleteByTitle(title);
     }
@@ -89,17 +89,17 @@ public class AdvertService {
     public void deleteAdvertsByUserId(Long userId) {
         if (!advertRepository.existsByCreatedById(userId)) {
             log.error("No adverts found for user with ID {}", userId);
-            throw new EntityNotFoundException("No adverts found for user with ID " + userId);
+            throw new AdvertDeletionException("No adverts found for user with ID " + userId);
         }
         advertRepository.deleteByCreatedById(userId);
     }
 
     @Transactional
     public void deleteAdvertsByDescriptionLike(String description) {
-        List<Advert> advertsToDelete = advertRepository.findByDescriptionContaining(description);
+        List<Advert> advertsToDelete = advertRepository.findByDescriptionContainingIgnoreCase(description);
         if (advertsToDelete.isEmpty()) {
             log.error("No adverts found with description like {}", description);
-            throw new EntityNotFoundException("No adverts found with description like " + description);
+            throw new AdvertDeletionException("No adverts found with description like " + description);
         }
         advertRepository.deleteByDescriptionContaining(description);
     }

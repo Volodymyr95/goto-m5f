@@ -13,7 +13,7 @@ public interface AdvertRepository extends CrudRepository<Advert, Long> {
 
     boolean existsByCreatedById(Long userId);
 
-    List<Advert> findByDescriptionContaining(String description);
+    List<Advert> findByDescriptionContainingIgnoreCase(String description);
 
     List<Advert> findAllByCreatedDateBetween(LocalDate from, LocalDate to);
 

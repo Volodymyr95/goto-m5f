@@ -220,7 +220,7 @@ public class AdvertServiceTest {
         advert.setDescription("This is a sample advert.");
         List<Advert> advertsToDelete = List.of(advert);
 
-        when(advertRepository.findByDescriptionContaining(description)).thenReturn(advertsToDelete);
+        when(advertRepository.findByDescriptionContainingIgnoreCase(description)).thenReturn(advertsToDelete);
 
         advertService.deleteAdvertsByDescriptionLike(description);
 
@@ -230,7 +230,7 @@ public class AdvertServiceTest {
     @Test
     public void deleteAdvertsByDescriptionLike_NonExistingDescription_ShouldThrowException() {
         String description = "non-existing";
-        when(advertRepository.findByDescriptionContaining(description)).thenReturn(Collections.emptyList());
+        when(advertRepository.findByDescriptionContainingIgnoreCase(description)).thenReturn(Collections.emptyList());
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
             advertService.deleteAdvertsByDescriptionLike(description);

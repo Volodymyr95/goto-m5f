@@ -41,23 +41,23 @@ public class AdvertController {
 
     }
 
-    @DeleteMapping("/advert/{id}")
+    @DeleteMapping("/{id}")
     public void deleteAdvert(@PathVariable Long id) {
         advertService.deleteAdvertById(id);
     }
 
-    @DeleteMapping("/advert/title/{title}")
+    @DeleteMapping("/title/{title}")
     public void deleteAdvertByTtile(@PathVariable String title) {
         advertService.deleteAdvertByTitle(title);
     }
 
 
-    @DeleteMapping("/adverts/user/{userId}")
+    @DeleteMapping("/user/{userId}")
     public void deleteAdvertsByUserId(@PathVariable Long userId) {
         advertService.deleteAdvertsByUserId(userId);
     }
 
-    @DeleteMapping("/adverts/description")
+    @DeleteMapping("/description")
     public void deleteAdvertsByDescription(@RequestParam String description) {
         advertService.deleteAdvertsByDescriptionLike(description);
     }
