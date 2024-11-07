@@ -5,6 +5,7 @@ import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.entity.Category;
+import com.codegym.jrugotom5.exception.AdvertDeletionException;
 import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
@@ -165,7 +166,7 @@ public class AdvertServiceTest {
         Long nonExistingId = 1L;
         when(advertRepository.existsById(nonExistingId)).thenReturn(false);
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+        AdvertDeletionException exception = assertThrows(AdvertDeletionException.class, () -> {
             advertService.deleteAdvertById(nonExistingId);
         });
         assertEquals("Advert with 1 ID not found", exception.getMessage());
@@ -186,8 +187,9 @@ public class AdvertServiceTest {
         String nonExistingTitle = "Sample Advert";
         when(advertRepository.existsByTitle(nonExistingTitle)).thenReturn(false);
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+        AdvertDeletionException exception = assertThrows(AdvertDeletionException.class, () -> {
             advertService.deleteAdvertByTitle(nonExistingTitle);
+
         });
         assertEquals("Advert with title Sample Advert not found", exception.getMessage());
     }
@@ -207,7 +209,7 @@ public class AdvertServiceTest {
         Long nonExistingUserId = 1L;
         when(advertRepository.existsByCreatedById(nonExistingUserId)).thenReturn(false);
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+        AdvertDeletionException exception = assertThrows(AdvertDeletionException.class, () -> {
             advertService.deleteAdvertsByUserId(nonExistingUserId);
         });
         assertEquals("No adverts found for user with ID " + nonExistingUserId, exception.getMessage());
@@ -232,7 +234,7 @@ public class AdvertServiceTest {
         String description = "non-existing";
         when(advertRepository.findByDescriptionContainingIgnoreCase(description)).thenReturn(Collections.emptyList());
 
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
+        AdvertDeletionException exception = assertThrows(AdvertDeletionException.class, () -> {
             advertService.deleteAdvertsByDescriptionLike(description);
         });
         assertEquals("No adverts found with description like " + description, exception.getMessage());
