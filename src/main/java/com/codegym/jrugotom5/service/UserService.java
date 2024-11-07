@@ -3,7 +3,6 @@ package com.codegym.jrugotom5.service;
 import com.codegym.jrugotom5.dto.UserBasicInfoDTO;
 import com.codegym.jrugotom5.exception.UserDeletionException;
 import com.codegym.jrugotom5.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
