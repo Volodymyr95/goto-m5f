@@ -2,7 +2,7 @@ package com.codegym.jrugotom5.service;
 
 import com.codegym.jrugotom5.dto.UserBasicInfoDTO;
 import com.codegym.jrugotom5.entity.User;
-import com.codegym.jrugotom5.exception.UserDeletionException;
+import com.codegym.jrugotom5.exception.InavlidUserDelException;
 import com.codegym.jrugotom5.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,7 +68,7 @@ public class UserServiceTest {
     public void deleteUserById_NonExistingId_ShouldThrowException() {
         when(userRepository.existsById(user.getId())).thenReturn(false);
 
-        UserDeletionException exception = assertThrows(UserDeletionException.class, () -> {
+        InavlidUserDelException exception = assertThrows(InavlidUserDelException.class, () -> {
             userService.deleteUserById(user.getId());
         });
         assertEquals("User with 1 ID not found", exception.getMessage());
@@ -87,7 +87,7 @@ public class UserServiceTest {
     public void deleteUserByEmail_NonExistingEmail_ShouldThrowException() {
         when(userRepository.existsByEmail(user.getEmail())).thenReturn(false);
 
-        UserDeletionException exception = assertThrows(UserDeletionException.class, () -> {
+        InavlidUserDelException exception = assertThrows(InavlidUserDelException.class, () -> {
             userService.deleteUserByEmail(user.getEmail());
         });
         assertEquals("User with email john.smith@example.com not found", exception.getMessage());
@@ -106,7 +106,7 @@ public class UserServiceTest {
     public void deleteUserByName_NonExistingName_ShouldThrowException() {
         when(userRepository.existsByFirstNameAndLastName(user.getFirstName(), user.getLastName())).thenReturn(false);
 
-        UserDeletionException exception = assertThrows(UserDeletionException.class, () -> {
+        InavlidUserDelException exception = assertThrows(InavlidUserDelException.class, () -> {
             userService.deleteUserByName(user.getFirstName(), user.getLastName());
         });
         assertEquals("User with firstname John and lastname Smith not found", exception.getMessage());
