@@ -10,9 +10,4 @@ class JruGotoM5ApplicationTests {
     void contextLoads() {
     }
 
-
-
-
-
-
 }
