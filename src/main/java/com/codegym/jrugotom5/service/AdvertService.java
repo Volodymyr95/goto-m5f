@@ -9,7 +9,6 @@ import com.codegym.jrugotom5.exception.EntityNotFoundException;
 import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.InvalidUserIdException;
-import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
