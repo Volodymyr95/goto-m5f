@@ -194,4 +194,27 @@ public class AdvertServiceTest {
         verify(advertRepository, never()).findAllByCategory(any(Category.class));
         verify(modelMapper, never()).map(any(), eq(AdvertBasicInfoDTO.class));
     }
+
+    @Test
+    void testGetAdvertById() {
+        long id = 1;
+        String title = "Test Advert 1";
+
+        Advert advert = new Advert();
+        advert.setId(id);
+        advert.setTitle(title);
+        advert.setCreatedBy(new User());
+
+        when(advertRepository.findById(id)).thenReturn(Optional.of(advert));
+
+        AdvertFullInfoDTO expectedAdvert = new AdvertFullInfoDTO();
+        expectedAdvert.setId(id);
+        expectedAdvert.setTitle(title);
+
+        when(modelMapper.map(advert, AdvertFullInfoDTO.class)).thenReturn(expectedAdvert);
+
+        AdvertFullInfoDTO actualAdvert = advertService.getAdvertById(id);
+
+        assertEquals(expectedAdvert, actualAdvert);
+    }
 }

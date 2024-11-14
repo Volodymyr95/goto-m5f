@@ -5,6 +5,7 @@ import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.Category;
+import com.codegym.jrugotom5.exception.EntityNotFoundException;
 import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.InvalidUserIdException;
@@ -74,5 +75,15 @@ public class AdvertService {
         } catch (IllegalArgumentException e) {
             throw new InvalidCategoryException("Invalid category: %s".formatted(category));
         }
+
+    }
+
+    public AdvertFullInfoDTO getAdvertById(Long id) {
+        Advert advert = advertRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Advert with id " + id + " not found."));
+
+        AdvertFullInfoDTO dto = modelMapper.map(advert, AdvertFullInfoDTO.class);
+        dto.setUserCreatorId(advert.getCreatedBy().getId());
+        return dto;
     }
 }
