@@ -52,12 +52,28 @@ public class AdvertController {
         return advertService.getAdvertsByUserId(userId);
     }
 
+    @Operation(summary = "Retrieve an Advert by phrase contains in title", tags = {"adverts", "get"})
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(schema = @Schema(implementation = AdvertBasicInfoDTO.class), mediaType = "application/json"))
     @GetMapping("/adverts")
     public List<AdvertBasicInfoDTO> getByTitleContains(@RequestParam(value = "title") String phrase) {
         return advertService.getByTitleContains(phrase);
     }
 
-    @GetMapping("/{category}/")
+    @Operation(summary = "Retrieve an Advert by Id", tags = {"adverts", "get"})
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(
+                            schema = @Schema(implementation = AdvertBasicInfoDTO.class),
+                            mediaType = "application/json")),
+            @ApiResponse(
+                    responseCode = "400",
+                    content = @Content(schema = @Schema()),
+                    description = "Receive a 400 error if such Category doesn't exist")
+    })
+    @GetMapping("/{category}")
     public List<AdvertBasicInfoDTO> getByCategory(@PathVariable String category) {
         return advertService.getByCategory(category);
 

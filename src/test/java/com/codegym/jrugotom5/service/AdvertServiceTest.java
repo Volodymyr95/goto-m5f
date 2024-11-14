@@ -194,4 +194,12 @@ public class AdvertServiceTest {
         verify(advertRepository, never()).findAllByCategory(any(Category.class));
         verify(modelMapper, never()).map(any(), eq(AdvertBasicInfoDTO.class));
     }
+
+    @Test
+    void testDeactivateExpiredAdverts() {
+        advertService.deactivateExpiredAdverts();
+
+        verify(advertRepository).deactivateExpiredAdverts();
+    }
+
 }

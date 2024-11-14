@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -74,5 +75,11 @@ public class AdvertService {
         } catch (IllegalArgumentException e) {
             throw new InvalidCategoryException("Invalid category: %s".formatted(category));
         }
+
+    }
+
+    @Transactional
+    public void deactivateExpiredAdverts() {
+        advertRepository.deactivateExpiredAdverts();
     }
 }
