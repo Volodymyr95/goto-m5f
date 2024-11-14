@@ -93,6 +93,39 @@ public class AdvertControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+
+    @Test
+    @SneakyThrows
+    public void testGetAdvertsByUser_ValidUserId_ReturnsAdverts() {
+        User user = new User();
+        user.setId(1L);
+        userRepository.save(user);
+
+        Advert advert1 = new Advert();
+        advert1.setCreatedBy(user);
+        Advert advert2 = new Advert();
+        advert2.setCreatedBy(user);
+        advertRepository.saveAll(List.of(advert1, advert2));
+
+        mockMvc.perform(get("/api/adverts/user").param("id", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    @SneakyThrows
+    public void testGetAdvertsByUser_InvalidUserId_ReturnsBadRequest() {
+        mockMvc.perform(get("/api/adverts/user").param("id", "-1"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @SneakyThrows
+    public void testGetAdvertsByUser_UserNotFound_ReturnsNotFound() {
+        mockMvc.perform(get("/api/adverts/user").param("id", "99"))
+                .andExpect(status().isNotFound());
+    }
+
     @Test
     void createAdvert_ShouldReturnCreated() throws Exception {
         User testUser = new User();

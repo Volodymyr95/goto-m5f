@@ -3,11 +3,13 @@ package com.codegym.jrugotom5.service;
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertCreateDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
+import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.Category;
 import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
+import com.codegym.jrugotom5.exception.InvalidUserIdException;
 import com.codegym.jrugotom5.exception.UserNotFoundException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.repository.UserRepository;
@@ -57,6 +59,14 @@ public class AdvertService {
         return advertRepository.findAllByTitleContainsIgnoreCase(phrase)
                 .stream()
                 .map(advert -> modelMapper.map(advert, AdvertBasicInfoDTO.class))
+                .toList();
+    }
+
+    public List<AdvertInfoForCreatorDto> getAdvertsByUserId(Long id) {
+        userRepository.findById(id)
+                .orElseThrow(() -> new InvalidUserIdException("There is no user with this id %d".formatted(id)));
+        return advertRepository.getAdvertsByCreatedById(id).stream()
+                .map(advert -> modelMapper.map(advert, AdvertInfoForCreatorDto.class))
                 .toList();
     }
 

@@ -3,11 +3,13 @@ package com.codegym.jrugotom5.service;
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertCreateDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
+import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.Category;
 import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
+import com.codegym.jrugotom5.exception.InvalidUserIdException;
 import com.codegym.jrugotom5.exception.UserNotFoundException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.repository.UserRepository;
@@ -141,6 +143,43 @@ class AdvertServiceTest {
         verify(modelMapper, times(2)).map(any(Advert.class), eq(AdvertBasicInfoDTO.class));
     }
 
+
+    @Test
+    void testGetAdvertsByUserId_WithAdverts_ReturnsDtoList() {
+        Long userId = 2L;
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(new User()));
+
+        Advert advert1 = new Advert();
+        Advert advert2 = new Advert();
+        List<Advert> adverts = List.of(advert1, advert2);
+
+        List<AdvertInfoForCreatorDto> expected = new ArrayList<>();
+
+        when(advertRepository.getAdvertsByCreatedById(userId)).thenReturn(adverts);
+
+        when(modelMapper.map(any(Advert.class), eq(AdvertInfoForCreatorDto.class)))
+                .thenAnswer(invocation -> {
+                    AdvertInfoForCreatorDto dto = new AdvertInfoForCreatorDto();
+                    expected.add(dto);
+                    return dto;
+                });
+        List<AdvertInfoForCreatorDto> result = advertService.getAdvertsByUserId(userId);
+
+        assertEquals(expected, result);
+        verify(advertRepository).getAdvertsByCreatedById(userId);
+    }
+
+    @Test
+    void testGetAdvertsByUserId_InvalidUserId_ReturnsException() {
+        Long invalidUserId = 99L;
+
+        InvalidUserIdException exception = assertThrows(InvalidUserIdException.class, () -> {
+            advertService.getAdvertsByUserId(invalidUserId);
+        });
+
+        assertEquals("There is no user with this id %d".formatted(invalidUserId), exception.getMessage());
+    }
 
     @Test
     void getByCategory_ShouldReturnListOfAdverts_WhenCategoryExists() {

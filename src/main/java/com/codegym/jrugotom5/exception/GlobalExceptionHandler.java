@@ -8,17 +8,24 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@ControllerAdvice
 @Slf4j
+@ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidDateRangeException.class)
     public ResponseEntity<String> handleInvalidDateRange(InvalidDateRangeException ex) {
         log.error("Occurred Exception: {} ", ex.getMessage(), ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidUserIdException.class)
+    public ResponseEntity<String> handleInvalidUserId(InvalidUserIdException e) {
+        log.error("An error occurred: {}", e.getMessage(), e);
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
@@ -47,5 +54,24 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleInvalidCategoryException(InvalidCategoryException e) {
         log.error("Occurred Exception: {} ", e.getMessage(), e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<Map<String, String>> handleMethodValidationException(HandlerMethodValidationException e) {
+        log.error("Occurred Exception: {} ", e.getMessage(), e);
+        HashMap<String, String> errors = new HashMap<>();
+
+        e.getAllErrors().forEach(
+                error -> {
+                    if (error instanceof FieldError) {
+                        String fieldName = ((FieldError) error).getField();
+                        String errorMessage = error.getDefaultMessage();
+                        errors.put(fieldName, errorMessage);
+                    } else {
+                        errors.put("error", error.getDefaultMessage());
+                    }
+                }
+        );
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 }
