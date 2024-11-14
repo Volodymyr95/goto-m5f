@@ -10,12 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ScheduledTasks {
+public class TasksScheduler {
 
     private final AdvertService advertService;
 
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "${tasks-scheduler.make-adverts-inactive.cron}")
     public void makeAdvertsInactive() {
         advertService.deactivateExpiredAdverts();
         log.info("Daily task \"makeAdvertsInactive\" has done.");
