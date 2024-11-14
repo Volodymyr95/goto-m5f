@@ -58,16 +58,16 @@ public class AdvertControllerTest {
         userRepository.save(user);
         for (int i = 0; i < numberOfAdverts; i++) {
             Advert advert = new Advert();
-            advert.setCreatedDate(LocalDate.of(2024,(i + 1) % 12,(i + 1) % 30));
+            advert.setCreatedDate(LocalDate.of(2024, (i + 1) % 12, (i + 1) % 30));
             advert.setCreatedBy(user);
             advertRepository.save(advert);
         }
 
-        LocalDate from = LocalDate.of(2024,1,1);
-        LocalDate to = LocalDate.of(2025,1,1);
+        LocalDate from = LocalDate.of(2024, 1, 1);
+        LocalDate to = LocalDate.of(2025, 1, 1);
         mockMvc.perform(get("/api/adverts/date")
-                        .param("from",from.toString())
-                        .param("to",to.toString()))
+                        .param("from", from.toString())
+                        .param("to", to.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(numberOfAdverts)));
     }
@@ -76,19 +76,19 @@ public class AdvertControllerTest {
     @SneakyThrows
     public void testGetAdvertsByDateRange_EmptyDates() {
         mockMvc.perform(get("/api/adverts/date")
-                        .param("from"," ")
-                        .param("to"," "))
+                        .param("from", " ")
+                        .param("to", " "))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @SneakyThrows
     public void testGetAdvertsByDateRange_FromHigherThanTo() {
-        LocalDate from = LocalDate.of(2025,1,1);
-        LocalDate to = LocalDate.of(2024,1,1);
+        LocalDate from = LocalDate.of(2025, 1, 1);
+        LocalDate to = LocalDate.of(2024, 1, 1);
         mockMvc.perform(get("/api/adverts/date")
-                        .param("from",from.toString())
-                        .param("to",to.toString()))
+                        .param("from", from.toString())
+                        .param("to", to.toString()))
                 .andExpect(status().isBadRequest());
     }
 
@@ -133,5 +133,38 @@ public class AdvertControllerTest {
     public void testGetAdvertsByCategoryInvalidCategory() {
         mockMvc.perform(get("/api/adverts/bad_category"))
                 .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    @SneakyThrows
+    public void testGetAdvertsByUser_ValidUserId_ReturnsAdverts() {
+        User user = new User();
+        user.setId(1L);
+        userRepository.save(user);
+
+        Advert advert1 = new Advert();
+        advert1.setCreatedBy(user);
+        Advert advert2 = new Advert();
+        advert2.setCreatedBy(user);
+        advertRepository.saveAll(List.of(advert1, advert2));
+
+        mockMvc.perform(get("/api/adverts/user").param("id", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    @SneakyThrows
+    public void testGetAdvertsByUser_InvalidUserId_ReturnsBadRequest() {
+        mockMvc.perform(get("/api/adverts/user").param("id", "-1"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @SneakyThrows
+    public void testGetAdvertsByUser_UserNotFound_ReturnsNotFound() {
+        mockMvc.perform(get("/api/adverts/user").param("id", "99"))
+                .andExpect(status().isNotFound());
     }
 }
