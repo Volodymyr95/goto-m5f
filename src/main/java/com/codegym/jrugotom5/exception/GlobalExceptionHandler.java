@@ -8,17 +8,24 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@ControllerAdvice
 @Slf4j
+@ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidDateRangeException.class)
     public ResponseEntity<String> handleInvalidDateRange(InvalidDateRangeException ex) {
         log.error("Occurred Exception: {} ", ex.getMessage(), ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidUserIdException.class)
+    public ResponseEntity<String> handleInvalidUserId(InvalidUserIdException e) {
+        log.error("An error occurred: {}", e.getMessage(), e);
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
@@ -31,12 +38,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleInvalidCategoryException(InvalidCategoryException e) {
         log.error("Occurred Exception: {} ", e.getMessage(), e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<String> handleEntityNotFound(EntityNotFoundException e) {
-        log.error("Occurred Exception: {} ", e.getMessage(), e);
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)
@@ -55,7 +56,12 @@ public class GlobalExceptionHandler {
                     }
                 }
         );
-
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleEntityNotFound(EntityNotFoundException e) {
+        log.error("Occurred Exception: {} ", e.getMessage(), e);
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 }

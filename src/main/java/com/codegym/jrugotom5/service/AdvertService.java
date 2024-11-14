@@ -2,12 +2,16 @@ package com.codegym.jrugotom5.service;
 
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
+import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.Category;
 import com.codegym.jrugotom5.exception.EntityNotFoundException;
 import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
+import com.codegym.jrugotom5.exception.InvalidUserIdException;
+import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
+import com.codegym.jrugotom5.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -24,6 +28,7 @@ import java.util.stream.Collectors;
 public class AdvertService {
     private final AdvertRepository advertRepository;
     private final ModelMapper modelMapper;
+    private final UserRepository userRepository;
 
     public List<AdvertFullInfoDTO> getAdvertsByDateRange(LocalDate from, LocalDate to) {
         if (from.isAfter(to) || from.isEqual(to)) {
@@ -50,6 +55,14 @@ public class AdvertService {
         return advertRepository.findAllByTitleContainsIgnoreCase(phrase)
                 .stream()
                 .map(advert -> modelMapper.map(advert, AdvertBasicInfoDTO.class))
+                .toList();
+    }
+
+    public List<AdvertInfoForCreatorDto> getAdvertsByUserId(Long id) {
+        userRepository.findById(id)
+                .orElseThrow(() -> new InvalidUserIdException("There is no user with this id %d".formatted(id)));
+        return advertRepository.getAdvertsByCreatedById(id).stream()
+                .map(advert -> modelMapper.map(advert, AdvertInfoForCreatorDto.class))
                 .toList();
     }
 
