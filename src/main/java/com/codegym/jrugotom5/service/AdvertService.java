@@ -1,13 +1,16 @@
 package com.codegym.jrugotom5.service;
 
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
+import com.codegym.jrugotom5.dto.AdvertCreateDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.Category;
+import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.InvalidUserIdException;
+import com.codegym.jrugotom5.exception.UserNotFoundException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,6 +28,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class AdvertService {
+
+    private static final Integer DAYS_TO_END = 30;
     private final AdvertRepository advertRepository;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
@@ -74,5 +80,27 @@ public class AdvertService {
         } catch (IllegalArgumentException e) {
             throw new InvalidCategoryException("Invalid category: %s".formatted(category));
         }
+
+    }
+
+    @Transactional
+    public AdvertFullInfoDTO createAdvert(AdvertCreateDTO advertCreateDTO) {
+        Long id = advertCreateDTO.getUserCreatorId();
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id " + id + " does not exist."));
+
+        Advert advertEntity = new Advert();
+        advertEntity.setCreatedBy(user);
+        advertEntity.setTitle(advertCreateDTO.getTitle());
+        advertEntity.setDescription(advertCreateDTO.getDescription());
+        advertEntity.setCreatedDate(LocalDate.now());
+        advertEntity.setEndDate(LocalDate.now().plusDays(DAYS_TO_END));
+        advertEntity.setIsActive(true);
+        advertEntity.setCategory(advertCreateDTO.getCategory());
+
+        AdvertFullInfoDTO advertFullInfoDTO = modelMapper.map(advertRepository.save(advertEntity), AdvertFullInfoDTO.class);
+        advertFullInfoDTO.setUserCreatorId(id);
+        return advertFullInfoDTO;
     }
 }

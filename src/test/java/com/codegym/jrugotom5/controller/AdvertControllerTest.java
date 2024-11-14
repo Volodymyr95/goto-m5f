@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -20,8 +21,8 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -29,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @Sql(scripts = "/clear_h2.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class AdvertControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -122,5 +124,62 @@ public class AdvertControllerTest {
     public void testGetAdvertsByUser_UserNotFound_ReturnsNotFound() {
         mockMvc.perform(get("/api/adverts/user").param("id", "99"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void createAdvert_ShouldReturnCreated() throws Exception {
+        User testUser = new User();
+        testUser.setFirstName("Test User");
+        testUser.setLastName("Test User");
+        userRepository.save(testUser);
+
+        String advertCreateDtoJson = """
+                {
+                    "title": "sample title",
+                    "description": "sample description",
+                    "category": "REAL_ESTATE",
+                    "userCreatorId": 1
+                }
+                """;
+
+        mockMvc.perform(post("/api/adverts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(advertCreateDtoJson))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void createAdvert_WhenNoUserFound_ShouldReturnNotFound() throws Exception {
+        String advertCreateDtoJson = """
+                {
+                    "title": "sample title",
+                    "description": "sample description",
+                    "category": "REAL_ESTATE",
+                    "userCreatorId": 0
+                }
+                """;
+
+        mockMvc.perform(post("/api/adverts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(advertCreateDtoJson))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("User with id 0 does not exist."));
+    }
+
+    @Test
+    void createAdvert_WhenInvalidInput_ShouldReturnBadRequest() throws Exception {
+        String advertCreateDtoJson = """
+                {
+                    "title": "",
+                    "description": "",
+                    "category": "",
+                    "userCreatorId": ""
+                }
+                """;
+
+        mockMvc.perform(post("/api/adverts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(advertCreateDtoJson))
+                .andExpect(status().isBadRequest());
     }
 }

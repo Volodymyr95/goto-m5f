@@ -1,6 +1,7 @@
 package com.codegym.jrugotom5.service;
 
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
+import com.codegym.jrugotom5.dto.AdvertCreateDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
 import com.codegym.jrugotom5.entity.Advert;
@@ -9,10 +10,12 @@ import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.InvalidUserIdException;
+import com.codegym.jrugotom5.exception.UserNotFoundException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
 import com.codegym.jrugotom5.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
@@ -25,27 +28,30 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class AdvertServiceTest {
-    @Mock
-    private AdvertRepository advertRepository;
+class AdvertServiceTest {
 
     @Mock
     private UserRepository userRepository;
 
     @Mock
+    private AdvertRepository advertRepository;
+
+    @Mock
     private ModelMapper modelMapper;
 
+    @Mock
+    private UserService userService;
+
+    @InjectMocks
     private AdvertService advertService;
 
-
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-        advertService = new AdvertService(advertRepository, modelMapper, userRepository);
     }
 
     @Test
-    public void testGetAllAdverts_OneAdvert() {
+    void testGetAllAdverts_OneAdvert() {
         AdvertBasicInfoDTO expectedDto = new AdvertBasicInfoDTO();
         expectedDto.setId(1L);
         expectedDto.setTitle("Test title");
@@ -104,6 +110,17 @@ public class AdvertServiceTest {
 
         InvalidDateRangeException exception = assertThrows(InvalidDateRangeException.class, () -> {
             advertService.getAdvertsByDateRange(from, to);
+        });
+
+        assertEquals("'From' date should be after 'To' date.", exception.getMessage());
+    }
+
+    @Test
+    void testGetAdvertsByDateRange_FromDateEqualToDate() {
+        LocalDate date = LocalDate.of(2023, 1, 1);
+
+        InvalidDateRangeException exception = assertThrows(InvalidDateRangeException.class, () -> {
+            advertService.getAdvertsByDateRange(date, date);
         });
 
         assertEquals("'From' date should be after 'To' date.", exception.getMessage());
@@ -193,5 +210,57 @@ public class AdvertServiceTest {
         assertEquals("Invalid category: %s".formatted(category), exception.getMessage());
         verify(advertRepository, never()).findAllByCategory(any(Category.class));
         verify(modelMapper, never()).map(any(), eq(AdvertBasicInfoDTO.class));
+    }
+
+    @Test
+    void createAdvert_userExists_advertCreatedSuccessfully() {
+        AdvertCreateDTO advertCreateDTO = new AdvertCreateDTO();
+        advertCreateDTO.setTitle("Test Title");
+        advertCreateDTO.setDescription("Test Description");
+        advertCreateDTO.setUserCreatorId(1L);
+
+        User user = new User();
+        user.setId(1L);
+
+        Advert advertEntity = new Advert();
+        advertEntity.setTitle(advertCreateDTO.getTitle());
+        advertEntity.setDescription(advertCreateDTO.getDescription());
+        advertEntity.setCreatedDate(LocalDate.now());
+        advertEntity.setEndDate(LocalDate.now().plusDays(30));
+        advertEntity.setIsActive(true);
+        advertEntity.setCreatedBy(user);
+
+        Advert advert = new Advert();
+        advert.setId(1L);
+
+        AdvertFullInfoDTO advertFullInfoDTO = new AdvertFullInfoDTO();
+        advertFullInfoDTO.setUserCreatorId(1L);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(advertRepository.save(any(Advert.class))).thenReturn(advert);
+        when(modelMapper.map(advert, AdvertFullInfoDTO.class)).thenReturn(advertFullInfoDTO);
+
+        AdvertFullInfoDTO result = advertService.createAdvert(advertCreateDTO);
+
+        verify(userRepository).findById(1L);
+        verify(advertRepository).save(any(Advert.class));
+        verify(modelMapper).map(advert, AdvertFullInfoDTO.class);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getUserCreatorId());
+    }
+
+    @Test
+    void createAdvert_userNotFound_throwsUserNotFoundException() {
+        AdvertCreateDTO advertCreateDTO = new AdvertCreateDTO();
+        advertCreateDTO.setTitle("Test Title");
+        advertCreateDTO.setDescription("Test Description");
+        advertCreateDTO.setUserCreatorId(1L);
+
+        when(userService.userExistsById(1L)).thenReturn(false);
+
+        assertThrows(UserNotFoundException.class, () -> advertService.createAdvert(advertCreateDTO));
+
+        verify(advertRepository, never()).save(any(Advert.class));
     }
 }

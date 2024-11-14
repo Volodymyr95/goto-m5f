@@ -9,4 +9,3 @@ public class JruGotoM5Application {
         SpringApplication.run(JruGotoM5Application.class, args);
     }
 }
-

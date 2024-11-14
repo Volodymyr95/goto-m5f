@@ -1,6 +1,7 @@
 package com.codegym.jrugotom5.controller;
 
 import com.codegym.jrugotom5.dto.AdvertBasicInfoDTO;
+import com.codegym.jrugotom5.dto.AdvertCreateDTO;
 import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
 import com.codegym.jrugotom5.service.AdvertService;
@@ -12,11 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,6 +25,7 @@ import java.util.List;
 @RequestMapping("/api/adverts")
 @RequiredArgsConstructor
 public class AdvertController {
+
     private final AdvertService advertService;
 
     @GetMapping()
@@ -61,5 +61,17 @@ public class AdvertController {
     public List<AdvertBasicInfoDTO> getByCategory(@PathVariable String category) {
         return advertService.getByCategory(category);
 
+    }
+
+    @Operation(summary = "Create new advert", tags = {"advert"})
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Advert created", content = {@Content(schema = @Schema)}),
+            @ApiResponse(responseCode = "400", description = "Invalid request payload", content = {@Content(schema = @Schema)}),
+            @ApiResponse(responseCode = "404", description = "User not found", content = {@Content(schema = @Schema)})
+    })
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public AdvertFullInfoDTO createAdvert(@RequestBody @Validated AdvertCreateDTO advertCreateDTO) {
+        return advertService.createAdvert(advertCreateDTO);
     }
 }
