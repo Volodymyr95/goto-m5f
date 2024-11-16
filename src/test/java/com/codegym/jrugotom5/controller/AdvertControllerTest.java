@@ -1,5 +1,6 @@
 package com.codegym.jrugotom5.controller;
 
+import com.codegym.jrugotom5.dto.AdvertDTO;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.User;
 import com.codegym.jrugotom5.repository.AdvertRepository;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -20,8 +22,11 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -89,5 +94,50 @@ public class AdvertControllerTest {
                         .param("from",from.toString())
                         .param("to",to.toString()))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @SneakyThrows
+    void testUpdateAdvertSuccessfully()  {
+
+        User user = new User();
+        user = userRepository.save(user);
+
+
+        Advert advert = new Advert();
+        advert.setTitle("Title");
+        advert.setDescription("Description");
+        advert.setCreatedBy(user);
+        advert = advertRepository.save(advert);
+
+        AdvertDTO updatedAdvertDTO = new AdvertDTO();
+        updatedAdvertDTO.setId(advert.getId());
+        updatedAdvertDTO.setTitle("Title");
+        updatedAdvertDTO.setDescription("Description");
+        updatedAdvertDTO.setUserId(user.getId());
+
+        mockMvc.perform(put("/api/adverts/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(String.valueOf(updatedAdvertDTO)))
+                .andExpect(status().isBadRequest());
+
+    }
+    @Test
+    @SneakyThrows
+    void testUpdateAdvertWithInvalidAdvertId() {
+
+        AdvertDTO updatedAdvertDTO = new AdvertDTO();
+        updatedAdvertDTO.setId(999L);
+        updatedAdvertDTO.setTitle("New Title");
+        updatedAdvertDTO.setDescription("New Description");
+        updatedAdvertDTO.setUserId(1L);
+
+
+        mockMvc.perform(put("/api/adverts/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(String.valueOf(updatedAdvertDTO)))
+                .andExpect(status().isBadRequest());
+
+
     }
 }
