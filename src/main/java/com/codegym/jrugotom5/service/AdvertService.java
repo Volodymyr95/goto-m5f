@@ -5,10 +5,12 @@ import com.codegym.jrugotom5.dto.AdvertFullInfoDTO;
 import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.Category;
+import com.codegym.jrugotom5.exception.InvalidAdDelException;
 import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.InvalidUserIdException;
 import com.codegym.jrugotom5.repository.AdvertRepository;
+import jakarta.transaction.Transactional;
 import com.codegym.jrugotom5.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,4 +77,21 @@ public class AdvertService {
             throw new InvalidCategoryException("Invalid category: %s".formatted(category));
         }
     }
+
+    @Transactional
+    public void deleteAdvertById(Long id) {
+        if (!advertRepository.existsById(id)) {
+            throw new InvalidAdDelException("Advert with %d ID not found".formatted(id));
+        }
+        advertRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteAdvertsByUserId(Long userId) {
+        if (!advertRepository.existsByCreatedById(userId)) {
+            throw new InvalidAdDelException("No adverts found for user with ID " + userId);
+        }
+        advertRepository.deleteByCreatedById(userId);
+    }
+
 }

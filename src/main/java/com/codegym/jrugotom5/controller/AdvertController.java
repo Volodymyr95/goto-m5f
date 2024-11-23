@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -62,4 +63,15 @@ public class AdvertController {
         return advertService.getByCategory(category);
 
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteAdvert(@PathVariable Long id) {
+        advertService.deleteAdvertById(id);
+    }
+
+    @DeleteMapping("/user/{userId}")
+    public void deleteAdvertsByUserId(@PathVariable Long userId) {
+        advertService.deleteAdvertsByUserId(userId);
+    }
+
 }

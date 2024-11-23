@@ -8,6 +8,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface AdvertRepository extends CrudRepository<Advert, Long> {
+
+    boolean existsByTitle(String title);
+
+    boolean existsByCreatedById(Long userId);
+
+    List<Advert> findByDescriptionContainingIgnoreCase(String description);
+
     List<Advert> getAdvertsByCreatedById(Long createdById);
 
     List<Advert> findAllByCreatedDateBetween(LocalDate from, LocalDate to);
@@ -15,4 +22,11 @@ public interface AdvertRepository extends CrudRepository<Advert, Long> {
     List<Advert> findAllByTitleContainsIgnoreCase(String phrase);
 
     List<Advert> findAllByCategory(Category category);
+
+    void deleteByTitle(String title);
+
+    void deleteByCreatedById(Long userId);
+
+    void deleteByDescriptionContaining(String description);
+
 }

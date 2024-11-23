@@ -57,4 +57,17 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(InvalidAdDelException.class)
+    public ResponseEntity<String> handleInvalidAdDelException(InvalidAdDelException e) {
+        log.error("Occurred Exception: {} ", e.getMessage(), e);
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InavlidUserDelException.class)
+    public ResponseEntity<String> handleInavlidUserDelException(InavlidUserDelException e) {
+        log.error("Occurred Exception: {} ", e.getMessage(), e);
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 }

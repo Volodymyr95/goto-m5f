@@ -6,6 +6,7 @@ import com.codegym.jrugotom5.dto.AdvertInfoForCreatorDto;
 import com.codegym.jrugotom5.entity.Advert;
 import com.codegym.jrugotom5.entity.Category;
 import com.codegym.jrugotom5.entity.User;
+import com.codegym.jrugotom5.exception.InvalidAdDelException;
 import com.codegym.jrugotom5.exception.InvalidCategoryException;
 import com.codegym.jrugotom5.exception.InvalidDateRangeException;
 import com.codegym.jrugotom5.exception.InvalidUserIdException;
@@ -194,4 +195,47 @@ public class AdvertServiceTest {
         verify(advertRepository, never()).findAllByCategory(any(Category.class));
         verify(modelMapper, never()).map(any(), eq(AdvertBasicInfoDTO.class));
     }
+
+    @Test
+    public void deleteAdvertById_ExistingId_ShouldDeleteAdvert() {
+        Long existingId = 1L;
+        when(advertRepository.existsById(existingId)).thenReturn(true);
+
+        advertService.deleteAdvertById(existingId);
+
+        verify(advertRepository).deleteById(existingId);
+    }
+
+    @Test
+    public void deleteAdvertById_NonExistingId_ShouldThrowException() {
+        Long nonExistingId = 1L;
+        when(advertRepository.existsById(nonExistingId)).thenReturn(false);
+
+        InvalidAdDelException exception = assertThrows(InvalidAdDelException.class, () -> {
+            advertService.deleteAdvertById(nonExistingId);
+        });
+        assertEquals("Advert with 1 ID not found", exception.getMessage());
+    }
+
+    @Test
+    public void deleteAdvertsByUserId_ExistingUserId_ShouldDeleteAdverts() {
+        Long existingUserId = 1L;
+        when(advertRepository.existsByCreatedById(existingUserId)).thenReturn(true);
+
+        advertService.deleteAdvertsByUserId(existingUserId);
+
+        verify(advertRepository).deleteByCreatedById(existingUserId);
+    }
+
+    @Test
+    public void deleteAdvertsByUserId_NonExistingUserId_ShouldThrowException() {
+        Long nonExistingUserId = 1L;
+        when(advertRepository.existsByCreatedById(nonExistingUserId)).thenReturn(false);
+
+        InvalidAdDelException exception = assertThrows(InvalidAdDelException.class, () -> {
+            advertService.deleteAdvertsByUserId(nonExistingUserId);
+        });
+        assertEquals("No adverts found for user with ID " + nonExistingUserId, exception.getMessage());
+    }
+
 }
