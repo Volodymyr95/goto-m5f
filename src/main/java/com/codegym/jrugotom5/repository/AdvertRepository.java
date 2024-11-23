@@ -15,6 +15,8 @@ public interface AdvertRepository extends CrudRepository<Advert, Long> {
 
     List<Advert> findByDescriptionContainingIgnoreCase(String description);
 
+    List<Advert> getAdvertsByCreatedById(Long createdById);
+
     List<Advert> findAllByCreatedDateBetween(LocalDate from, LocalDate to);
 
     List<Advert> findAllByTitleContainsIgnoreCase(String phrase);
