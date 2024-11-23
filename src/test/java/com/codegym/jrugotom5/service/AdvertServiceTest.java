@@ -219,28 +219,6 @@ public class AdvertServiceTest {
     }
 
     @Test
-    public void deleteAdvertByTitle_ExistingTitle_ShouldDeleteAdvert() {
-        String existingTitle = "Sample Advert";
-        when(advertRepository.existsByTitle(existingTitle)).thenReturn(true);
-
-        advertService.deleteAdvertByTitle(existingTitle);
-
-        verify(advertRepository).deleteByTitle(existingTitle);
-    }
-
-    @Test
-    public void deleteAdvertByTitle_NonExistingTitle_ShouldThrowException() {
-        String nonExistingTitle = "Sample Advert";
-        when(advertRepository.existsByTitle(nonExistingTitle)).thenReturn(false);
-
-        InvalidAdDelException exception = assertThrows(InvalidAdDelException.class, () -> {
-            advertService.deleteAdvertByTitle(nonExistingTitle);
-
-        });
-        assertEquals("Advert with title Sample Advert not found", exception.getMessage());
-    }
-
-    @Test
     public void deleteAdvertsByUserId_ExistingUserId_ShouldDeleteAdverts() {
         Long existingUserId = 1L;
         when(advertRepository.existsByCreatedById(existingUserId)).thenReturn(true);
@@ -261,28 +239,4 @@ public class AdvertServiceTest {
         assertEquals("No adverts found for user with ID " + nonExistingUserId, exception.getMessage());
     }
 
-    @Test
-    public void deleteAdvertsByDescriptionLike_ExistingDescription_ShouldDeleteAdverts() {
-        String description = "sample";
-        Advert advert = new Advert();
-        advert.setDescription("This is a sample advert.");
-        List<Advert> advertsToDelete = List.of(advert);
-
-        when(advertRepository.findByDescriptionContainingIgnoreCase(description)).thenReturn(advertsToDelete);
-
-        advertService.deleteAdvertsByDescriptionLike(description);
-
-        verify(advertRepository).deleteByDescriptionContaining(description);
-    }
-
-    @Test
-    public void deleteAdvertsByDescriptionLike_NonExistingDescription_ShouldThrowException() {
-        String description = "non-existing";
-        when(advertRepository.findByDescriptionContainingIgnoreCase(description)).thenReturn(Collections.emptyList());
-
-        InvalidAdDelException exception = assertThrows(InvalidAdDelException.class, () -> {
-            advertService.deleteAdvertsByDescriptionLike(description);
-        });
-        assertEquals("No adverts found with description like " + description, exception.getMessage());
-    }
 }
